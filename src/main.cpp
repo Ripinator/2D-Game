@@ -1,29 +1,14 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include "window.hpp"
 #include "game.hpp"
 
-// int createMainMenu(SDL_Window *window)
-// {
-//   SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-//   if (renderer == NULL)
-//   {
-//     printf("Creating the renderer failed! ERROR:%s\n", SDL_GetError());
-//     return -1;
-//   }
-
-//   SDL_Rect menuRect = {0, 0, 0, 0};
-//   MainMenu mainMenu(renderer, menuRect);
-
-//   mainMenu.drawMenu();
-
-//   return 0;
-// }
-
 int main(int argc, char *args[])
 {
   SDL_Init(SDL_INIT_VIDEO);
+  TTF_Init();
 
   Window window;
   if (!window.init("Swordlord", 1920, 1080))

@@ -16,9 +16,16 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 # Add executable
 add_executable(Swordlord ${SOURCES})
 
-# Find SDL2
+# Find SDL2 and SDL2_ttf
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
-target_link_libraries(Swordlord ${SDL2_LIBRARIES})
+find_package(SDL2_ttf REQUIRED)
 
-# Optional: link SDL2_image, SDL2_ttf, SDL2_mixer later if needed
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
+
+# Link SDL2 and SDL2_ttf libraries
+target_link_libraries(Swordlord ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARIES} SDL2 SDL2_ttf)
+
+add_custom_command(TARGET Swordlord POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:Swordlord>/assets
+)
