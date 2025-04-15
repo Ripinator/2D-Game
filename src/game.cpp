@@ -15,10 +15,12 @@ void gameLoop(Window &window)
 
   bool running = true;
   SDL_Event event;
+  const int frameDelay = 1000 / 60;
 
   while (running)
   {
-
+    Uint32 frameStart = SDL_GetTicks();
+    
     // input handling
     while (SDL_PollEvent(&event)) 
     {
@@ -37,6 +39,12 @@ void gameLoop(Window &window)
     currentScene->render();
 
     SDL_RenderPresent(renderer);
+
+    Uint32 frameTime = SDL_GetTicks() - frameStart;
+    if (frameTime < frameDelay)
+    {
+      SDL_Delay(frameDelay - frameTime);
+    }
   }
 
   delete currentScene;
