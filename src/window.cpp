@@ -2,7 +2,7 @@
 #include <iostream>
 
 Window::Window()
-    : screen_width_(0), screen_height_(0), window_(nullptr), screen_surface_(nullptr) {}
+    : screen_width_(0), screen_height_(0), window_(nullptr), renderer_(nullptr) {}
 
 Window::~Window() 
 {
@@ -15,13 +15,28 @@ void Window::close()
   {
     SDL_DestroyWindow(window_);
     window_ = nullptr;
-    screen_surface_ = nullptr;
+    renderer_ = nullptr;
   }
 }
 
 SDL_Window *Window::getWindow() const
 {
   return window_;
+}
+
+SDL_Renderer *Window::getRenderer() const
+{
+  return renderer_;
+}
+
+int Window::getScreenHeight() const
+{
+  return screen_height_;
+}
+
+int Window::getScreenWidth() const
+{
+  return screen_width_;
 }
 
 bool Window::init(const std::string &title, int width, int height)
@@ -40,6 +55,13 @@ bool Window::init(const std::string &title, int width, int height)
     return false;
   }
 
-  screen_surface_ = SDL_GetWindowSurface(window_);
+
+  renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED);
+  if (!renderer_) 
+  {
+    std::cerr << "Renderer creation failed! SDL_Error: " << SDL_GetError() << std::endl;
+    return false;
+  }
+
   return true;
 }
