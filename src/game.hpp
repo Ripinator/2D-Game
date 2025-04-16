@@ -8,11 +8,11 @@
 #include <string>
 #include "window.hpp"
 
-typedef enum gameState_
+enum class gameState
 {
-  GameMode_Menu = 1,
-  GameMode_Game = 2,
-  GameMode_Pause = 3
+  Menu = 1,
+  Play = 2,
+  Pause = 3
 };
 
 void gameLoop(Window &window);
