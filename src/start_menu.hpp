@@ -10,8 +10,12 @@ class StartMenu : public Scene
   private:
     SDL_Renderer* renderer_;
     SDL_Rect menu_rect_;
+    SDL_Rect quit_rect_;
+    SDL_Rect start_rect_;
     SDL_Rect border_rect_;
     SDL_Rect text_header_rect_;
+    SDL_Rect text_quit_rect_;
+    SDL_Rect text_start_rect_;
     TTF_Font* header_font_;
     TTF_Font* font_;
 
