@@ -19,16 +19,17 @@ class StartMenu : public Scene
     SDL_Rect text_start_rect_;
     TTF_Font* header_font_;
     TTF_Font* font_;
-    gameState &game_state_;
-
+    GameState &game_state_;
+    SDL_Event event;
 
   public:
-    StartMenu(Window& window, TTF_Font* header_font, TTF_Font* font, gameState &game_state);
+    StartMenu(Window& window, TTF_Font* header_font, TTF_Font* font, GameState &game_state);
     void handleEvent(const SDL_Event& event) override;
     void update() override;
-    void drawButton(SDL_Rect &rect, SDL_Texture *texture, SDL_Rect &text_rect, bool hovered, const SDL_Event& e, gameState on_click_state);
-    SDL_Texture* createText(const std::string& text, TTF_Font* font, SDL_Color color, SDL_Rect& outRect);
+    void drawButton(SDL_Rect &rect, SDL_Texture *texture, SDL_Rect &text_rect, bool hovered, SDL_Event &event);
+    SDL_Texture* createText(const std::string &text, TTF_Font* font, SDL_Color color, SDL_Rect& outRect);
     void render() override;
+    void setType(GameState game_state);
 };
 
 #endif
