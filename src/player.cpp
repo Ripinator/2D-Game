@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-Player::Player(Window &window) 
+Player::Player(Window &window, const SDL_Rect &floor_rect) 
   : renderer_(window.getRenderer()),
     velocity_x_(0),
     velocity_y_(0),
@@ -9,15 +9,18 @@ Player::Player(Window &window)
     is_jumping_(false),
     frame_width_(64),
     frame_height_(64),
-    current_frame_(0),
-    frame_count_(6),
+    current_frame_(0), 
+    frame_count_(8),
     animation_timer_(0),
-    animation_speed_(10)
+    animation_speed_(16),
+    floor_rect_(floor_rect)
 {
-  player_rect_.h = frame_width_ * 2;
-  player_rect_.w = frame_height_ * 2;
+  player_rect_.h = frame_width_ * 3;
+  player_rect_.w = frame_height_ * 3;
   player_rect_.x = 700;
   player_rect_.y = window.getScreenHeight() - player_rect_.h - (window.getScreenHeight() / 6);
+
+  screen_height = window.getScreenHeight();
 
   SDL_Surface *surface = IMG_Load("assets/WarriorMan-Sheet.png");
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
@@ -58,9 +61,8 @@ void Player::update()
   velocity_y_ += gravity_;
   player_rect_.y += velocity_y_;
 
-  int floor_y = renderer_ ? SDL_GetWindowSurface(SDL_GetWindowFromID(1))->h : 1080;
-  int floor_height = floor_y / 6;
-  int ground_level = floor_y - floor_height;
+  int floor_height = screen_height / 6;
+  int ground_level = screen_height - floor_height;
 
   if (player_rect_.y + player_rect_.h >= ground_level)
   {
@@ -80,14 +82,14 @@ void Player::update()
 void Player::render()
 {
   SDL_Rect src_rect;
-  src_rect.x = current_frame_ * frame_width_;
+  src_rect.x = current_frame_ * (frame_width_ + 16);
   src_rect.y = 0;
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
 
   SDL_Rect dest_rect;
   dest_rect.x = player_rect_.x;
-  dest_rect.y = player_rect_.y;
+  dest_rect.y = player_rect_.y + 48;
   dest_rect.w = player_rect_.w;
   dest_rect.h = player_rect_.h;
 
