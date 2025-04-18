@@ -38,7 +38,24 @@ void StartMenu::setType(GameState game_state)
 
 void StartMenu::handleEvent(const SDL_Event& event) 
 {
-  
+  int mouse_x, mouse_y;
+  SDL_GetMouseState(&mouse_x, &mouse_y);
+  SDL_Point mouse_point = {mouse_x, mouse_y};
+
+  bool hovered_start = SDL_PointInRect(&mouse_point, &start_rect_);
+  bool hovered_quit = SDL_PointInRect(&mouse_point, &quit_rect_);
+
+  if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+  {
+    if (hovered_start)
+    {
+      setType(GameState::Play);
+    }
+    else if (hovered_quit)
+    {
+      setType(GameState::Quit);
+    }
+  }
 }
 
 void StartMenu::update() 
@@ -74,53 +91,46 @@ SDL_Texture* StartMenu::createText(const std::string& text, TTF_Font* font, SDL_
 
 void StartMenu::render() 
 {
-    int mouse_x, mouse_y;
-    SDL_GetMouseState(&mouse_x, &mouse_y);
-    SDL_Point mouse_point = {mouse_x, mouse_y};
-    SDL_Event event;
+  int mouse_x, mouse_y;
+  SDL_GetMouseState(&mouse_x, &mouse_y);
+  SDL_Point mouse_point = {mouse_x, mouse_y};
+  SDL_Event event;
 
-    bool hovered_quit = SDL_PointInRect(&mouse_point, &quit_rect_);
-    bool hovered_start = SDL_PointInRect(&mouse_point, &start_rect_);
+  bool hovered_quit = SDL_PointInRect(&mouse_point, &quit_rect_);
+  bool hovered_start = SDL_PointInRect(&mouse_point, &start_rect_);
 
-    SDL_SetRenderDrawColor(renderer_, 135, 206, 235, 255);
-    SDL_RenderClear(renderer_);
+  SDL_SetRenderDrawColor(renderer_, 135, 206, 235, 255);
+  SDL_RenderClear(renderer_);
 
-    SDL_SetRenderDrawColor(renderer_, 255, 165, 0, 255);
-    SDL_RenderFillRect(renderer_, &border_rect_);
-    SDL_RenderDrawRect(renderer_, &border_rect_);
+  SDL_SetRenderDrawColor(renderer_, 255, 165, 0, 255);
+  SDL_RenderFillRect(renderer_, &border_rect_);
+  SDL_RenderDrawRect(renderer_, &border_rect_);
 
-    SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
-    SDL_RenderFillRect(renderer_, &menu_rect_);
-    SDL_RenderDrawRect(renderer_, &menu_rect_);
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+  SDL_RenderFillRect(renderer_, &menu_rect_);
+  SDL_RenderDrawRect(renderer_, &menu_rect_);
 
-    SDL_Color white = {255, 255, 255, 255};
-    SDL_Texture* text_texture_header = createText("Sworld Lord", header_font_, white, text_header_rect_);
-    text_header_rect_.x = menu_rect_.x + (menu_rect_.w - text_header_rect_.w) / 2;
-    text_header_rect_.y = menu_rect_.y + 40;
-    SDL_RenderCopy(renderer_, text_texture_header, nullptr, &text_header_rect_);
-    SDL_DestroyTexture(text_texture_header);
+  SDL_Color white = {255, 255, 255, 255};
+  SDL_Texture *text_texture_header = createText("Sworld Lord", header_font_, white, text_header_rect_);
+  text_header_rect_.x = menu_rect_.x + (menu_rect_.w - text_header_rect_.w) / 2;
+  text_header_rect_.y = menu_rect_.y + 40;
+  SDL_RenderCopy(renderer_, text_texture_header, nullptr, &text_header_rect_);
+  SDL_DestroyTexture(text_texture_header);
 
-    SDL_Color black = {0, 0, 0, 255};
-    SDL_Texture* text_texture_start = createText("Start", font_, black, text_start_rect_);
-    text_start_rect_.x = start_rect_.x + (start_rect_.w - text_start_rect_.w) / 2;
-    text_start_rect_.y = start_rect_.y + (start_rect_.h - text_start_rect_.h) / 2;
-    drawButton(start_rect_, text_texture_start, text_start_rect_, hovered_start, event);
-    if (hovered_start && SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
-    {
-      setType(GameState::Play);
-    }
-    SDL_DestroyTexture(text_texture_start);
+  SDL_Color black = {0, 0, 0, 255};
+  SDL_Texture *text_texture_start = createText("Start", font_, black, text_start_rect_);
+  text_start_rect_.x = start_rect_.x + (start_rect_.w - text_start_rect_.w) / 2;
+  text_start_rect_.y = start_rect_.y + (start_rect_.h - text_start_rect_.h) / 2;
+  drawButton(start_rect_, text_texture_start, text_start_rect_, hovered_start, event);
+  SDL_DestroyTexture(text_texture_start);
 
-    SDL_Texture* text_texture_quit = createText("Quit", font_, black, text_quit_rect_);
-    text_quit_rect_.x = quit_rect_.x + (quit_rect_.w - text_quit_rect_.w) / 2;
-    text_quit_rect_.y = quit_rect_.y + (quit_rect_.h - text_quit_rect_.h) / 2;
-    drawButton(quit_rect_, text_texture_quit, text_quit_rect_, hovered_quit, event);
-    if (hovered_quit && SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
-    {
-      setType(GameState::Quit);
-    }
-    SDL_DestroyTexture(text_texture_quit);
+  SDL_Texture *text_texture_quit = createText("Quit", font_, black, text_quit_rect_);
+  text_quit_rect_.x = quit_rect_.x + (quit_rect_.w - text_quit_rect_.w) / 2;
+  text_quit_rect_.y = quit_rect_.y + (quit_rect_.h - text_quit_rect_.h) / 2;
+  drawButton(quit_rect_, text_texture_quit, text_quit_rect_, hovered_quit, event);
+  SDL_DestroyTexture(text_texture_quit);
 
-    SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-    SDL_SetCursor(cursor);
+  SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+  SDL_SetCursor(cursor);
+  SDL_FreeCursor(cursor);
 }
