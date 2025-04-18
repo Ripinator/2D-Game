@@ -24,7 +24,7 @@ void gameLoop(Window &window)
     
     while (SDL_PollEvent(&event)) 
     {
-      if (event.type == SDL_QUIT) 
+      if (event.type == SDL_QUIT)
       {
         running = false;
       }
@@ -38,7 +38,8 @@ void gameLoop(Window &window)
     currentScene->render();
     SDL_RenderPresent(renderer);
 
-    if (state == GameState::Play)
+    // i only switch into the play state if the state is play and iam currently in the startmenu
+    if (state == GameState::Play && dynamic_cast<StartMenu*>(currentScene))
     {
       delete currentScene;
       currentScene = new GameScene(window, state);
