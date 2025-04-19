@@ -13,7 +13,8 @@ enum class PlayerState
   Standing = 0,
   Jumping = 4,
   WalkLeft = 2,
-  WalkRight = 3
+  WalkRight = 3,
+  AttackMouseLeft = 14
 };
 
 class Player
@@ -28,6 +29,8 @@ class Player
     int gravity_ = 1;
     int jump_strength_ = -20;
     bool is_jumping_ = false;
+    // I do this because I want to ensure you can only start another swing(attack) when the previous animation finished
+    bool is_attacking_ = false;
 
     std::unordered_map<PlayerState, int> frame_counts_;
     SDL_Rect standing_rect_;
