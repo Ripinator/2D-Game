@@ -46,16 +46,24 @@ void Player::update()
   if (keystate[SDL_SCANCODE_D])
   {
     velocity_x_ = 5;
+    //animation_state_ = PlayerState::WalkRight;
   }
   else if (keystate[SDL_SCANCODE_A])
   {
     velocity_x_ = -5;
+    //animation_state_ = PlayerState::WalkLeft;
   }
   else
   {
     velocity_x_ = 0;
+    //animation_state_ = PlayerState::Standing;
   }
-      
+
+  if (is_jumping_)
+  {
+    //animation_state_ = PlayerState::Jumping;
+  }
+  
   player_rect_.x += velocity_x_;
 
   velocity_y_ += gravity_;

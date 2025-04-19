@@ -5,6 +5,7 @@
 #include "settings_menu.hpp"
 #include <limits.h>
 #include <iostream>
+#include <memory>
 
 void gameLoop(Window &window)
 {
@@ -13,7 +14,7 @@ void gameLoop(Window &window)
   TTF_Font* bodyFont = TTF_OpenFont("assets/fonts/CinzelDecorative-Bold.ttf", 24);
   GameState state = GameState::Menu;
 
-  Scene* currentScene = new StartMenu(window, headerFont, bodyFont, state);
+  std::unique_ptr<Scene> currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
 
   bool running = true;
   SDL_Event event;
@@ -40,22 +41,21 @@ void gameLoop(Window &window)
     SDL_RenderPresent(renderer);
 
     // i only switch into the play state if the state is play and iam currently in the startmenu
-    if (state == GameState::Play && dynamic_cast<StartMenu*>(currentScene))
+    if (state == GameState::Play)
     {
-      delete currentScene;
-      currentScene = new GameScene(window, state);
+      currentScene = std::make_unique<GameScene>(window, state);
     }
     else if (state == GameState::Settings)
     {
-      delete currentScene;
-      currentScene = new SettingsMenu(window, headerFont, state);
+      currentScene = std::make_unique<SettingsMenu>(window, headerFont, state);
     }
     else if (state == GameState::Quit)
     {
-      delete currentScene;
-      currentScene = nullptr;
       running = false;
-      break;
+    }
+    else if (state == GameState::Menu)
+    {
+      currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
     }
 
     Uint32 frameTime = SDL_GetTicks() - frameStart;
@@ -64,6 +64,4 @@ void gameLoop(Window &window)
       SDL_Delay(frameDelay - frameTime);
     }
   }
-
-  delete currentScene;
 }
