@@ -5,14 +5,15 @@ Player::Player(Window &window, const SDL_Rect &floor_rect)
     velocity_x_(0),
     velocity_y_(0),
     gravity_(1),
-    jump_strength_(-20),
+    jump_strength_(-18),
     is_jumping_(false),
     frame_width_(64),
     frame_height_(64),
     current_frame_(0), 
     animation_timer_(0),
     animation_speed_(16),
-    floor_rect_(floor_rect)
+    floor_rect_(floor_rect),
+    is_attacking_(false)
 {
   player_rect_.h = frame_width_ * 3;
   player_rect_.w = frame_height_ * 3;
@@ -29,6 +30,7 @@ Player::Player(Window &window, const SDL_Rect &floor_rect)
   frame_counts_[PlayerState::WalkRight] = 8;
   frame_counts_[PlayerState::WalkLeft] = 8;
   frame_counts_[PlayerState::Jumping] = 11;
+  frame_counts_[PlayerState::AttackMouseLeft] = 5;
 }
 
 void Player::handleInput(const SDL_Event &event)
@@ -41,6 +43,10 @@ void Player::handleInput(const SDL_Event &event)
       is_jumping_ = true;
     }
   }
+  else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+  {
+    is_attacking_ = true;
+  }
 }
 
 void Player::animate()
@@ -49,16 +55,34 @@ void Player::animate()
   if (animation_timer_ >= animation_speed_)
   {
     int max_frames = frame_counts_[animation_state_];
-    current_frame_ = (current_frame_ + 1) % max_frames;
+    current_frame_++;
+
+    if (animation_state_ == PlayerState::AttackMouseLeft && current_frame_ >= max_frames)
+    {
+      is_attacking_ = false;
+      current_frame_ = 0;
+      animation_state_ = PlayerState::Standing;
+    }
+    else
+    {
+      current_frame_ %= max_frames;
+    }
+
     animation_timer_ = 0;
   }
 }
+
 
 void Player::update()
 {
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
-  if (keystate[SDL_SCANCODE_D])
+  if (is_attacking_)
+  {
+    animation_state_ = PlayerState::AttackMouseLeft;
+    animate();
+  }
+  else if (keystate[SDL_SCANCODE_D])
   {
     velocity_x_ = 5;
     animation_state_ = PlayerState::WalkRight;
@@ -70,18 +94,17 @@ void Player::update()
     animation_state_ = PlayerState::WalkLeft;
     animate();
   }
+  else if (is_jumping_)
+  {
+    animation_state_ = PlayerState::Jumping;
+    animate();
+  }
   else
   {
     velocity_x_ = 0;
     animation_state_ = PlayerState::Standing;
     animate();
-  }
-
-  if (is_jumping_)
-  {
-    animation_state_ = PlayerState::Jumping;
-    animate();
-  }
+  }  
   
   player_rect_.x += velocity_x_;
 
