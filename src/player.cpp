@@ -10,7 +10,6 @@ Player::Player(Window &window, const SDL_Rect &floor_rect)
     frame_width_(64),
     frame_height_(64),
     current_frame_(0), 
-    frame_count_(8),
     animation_timer_(0),
     animation_speed_(16),
     floor_rect_(floor_rect)
@@ -25,6 +24,11 @@ Player::Player(Window &window, const SDL_Rect &floor_rect)
   SDL_Surface *surface = IMG_Load("assets/WarriorMan-Sheet.png");
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
   SDL_FreeSurface(surface);
+
+  frame_counts_[PlayerState::Standing] = 8;
+  frame_counts_[PlayerState::WalkRight] = 8;
+  frame_counts_[PlayerState::WalkLeft] = 8;
+  frame_counts_[PlayerState::Jumping] = 11;
 }
 
 void Player::handleInput(const SDL_Event &event)
@@ -39,6 +43,17 @@ void Player::handleInput(const SDL_Event &event)
   }
 }
 
+void Player::animate()
+{
+  animation_timer_++;
+  if (animation_timer_ >= animation_speed_)
+  {
+    int max_frames = frame_counts_[animation_state_];
+    current_frame_ = (current_frame_ + 1) % max_frames;
+    animation_timer_ = 0;
+  }
+}
+
 void Player::update()
 {
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
@@ -46,22 +61,26 @@ void Player::update()
   if (keystate[SDL_SCANCODE_D])
   {
     velocity_x_ = 5;
-    //animation_state_ = PlayerState::WalkRight;
+    animation_state_ = PlayerState::WalkRight;
+    animate();
   }
   else if (keystate[SDL_SCANCODE_A])
   {
     velocity_x_ = -5;
-    //animation_state_ = PlayerState::WalkLeft;
+    animation_state_ = PlayerState::WalkLeft;
+    animate();
   }
   else
   {
     velocity_x_ = 0;
-    //animation_state_ = PlayerState::Standing;
+    animation_state_ = PlayerState::Standing;
+    animate();
   }
 
   if (is_jumping_)
   {
-    //animation_state_ = PlayerState::Jumping;
+    animation_state_ = PlayerState::Jumping;
+    animate();
   }
   
   player_rect_.x += velocity_x_;
@@ -78,20 +97,13 @@ void Player::update()
     velocity_y_ = 0;
     is_jumping_ = false;
   }
-
-  animation_timer_++;
-  if (animation_timer_ >= animation_speed_)
-  {
-    current_frame_ = (current_frame_ + 1) % frame_count_;
-    animation_timer_ = 0;
-  }
 }
 
 void Player::render()
 {
   SDL_Rect src_rect;
   src_rect.x = current_frame_ * (frame_width_ + 16);
-  src_rect.y = 0;
+  src_rect.y = static_cast<int>(animation_state_) * frame_height_;
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
 
