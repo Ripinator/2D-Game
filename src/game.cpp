@@ -2,6 +2,7 @@
 #include "game.hpp"
 #include "start_menu.hpp" 
 #include "game_scene.hpp"
+#include "settings_menu.hpp"
 #include <limits.h>
 #include <iostream>
 
@@ -43,6 +44,11 @@ void gameLoop(Window &window)
     {
       delete currentScene;
       currentScene = new GameScene(window, state);
+    }
+    else if (state == GameState::Settings)
+    {
+      delete currentScene;
+      currentScene = new SettingsMenu(window, headerFont, state);
     }
     else if (state == GameState::Quit)
     {
