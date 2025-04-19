@@ -1,8 +1,9 @@
 #include "start_menu.hpp"
 #include <SDL2/SDL_ttf.h>
 #include "window.hpp"
+// iam so sorry this file is filled with horrible code
 
-StartMenu::StartMenu(Window &window, TTF_Font* header_font, TTF_Font* font, GameState &game_state) 
+StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state) 
 : renderer_(window.getRenderer()), header_font_(header_font), font_(font), game_state_(game_state)
 {
   int screen_width = window.getScreenWidth();
@@ -28,7 +29,12 @@ StartMenu::StartMenu(Window &window, TTF_Font* header_font, TTF_Font* font, Game
   quit_rect_.w = rect_width / 5;
   quit_rect_.h = rect_height / 12;
   quit_rect_.x = menu_rect_.x + (menu_rect_.w - quit_rect_.w) / 2;
-  quit_rect_.y = menu_rect_.y + (menu_rect_.h - quit_rect_.h) / 2;
+  quit_rect_.y = menu_rect_.y + (menu_rect_.h - quit_rect_.h) / 2 + 50;
+
+  settings_menu_rect_.w = rect_width / 5;
+  settings_menu_rect_.h = rect_height / 12;
+  settings_menu_rect_.x = menu_rect_.x + (menu_rect_.w - quit_rect_.w) / 2;
+  settings_menu_rect_.y = menu_rect_.y + (menu_rect_.h - quit_rect_.h) / 2;
 }
 
 void StartMenu::setType(GameState game_state)
@@ -44,6 +50,7 @@ void StartMenu::handleEvent(const SDL_Event& event)
 
   bool hovered_start = SDL_PointInRect(&mouse_point, &start_rect_);
   bool hovered_quit = SDL_PointInRect(&mouse_point, &quit_rect_);
+  bool hovered_settings = SDL_PointInRect(&mouse_point, &settings_menu_rect_);
 
   if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
   {
@@ -54,6 +61,10 @@ void StartMenu::handleEvent(const SDL_Event& event)
     else if (hovered_quit)
     {
       setType(GameState::Quit);
+    }
+    else if (hovered_settings)
+    {
+      setType(GameState::Settings);
     }
   }
 }
@@ -98,6 +109,7 @@ void StartMenu::render()
 
   bool hovered_quit = SDL_PointInRect(&mouse_point, &quit_rect_);
   bool hovered_start = SDL_PointInRect(&mouse_point, &start_rect_);
+  bool hovered_settings = SDL_PointInRect(&mouse_point, &settings_menu_rect_);
 
   SDL_SetRenderDrawColor(renderer_, 135, 206, 235, 255);
   SDL_RenderClear(renderer_);
@@ -129,6 +141,12 @@ void StartMenu::render()
   text_quit_rect_.y = quit_rect_.y + (quit_rect_.h - text_quit_rect_.h) / 2;
   drawButton(quit_rect_, text_texture_quit, text_quit_rect_, hovered_quit, event);
   SDL_DestroyTexture(text_texture_quit);
+
+  SDL_Texture *text_texture_settings = createText("Settings", font_, black, text_settings_rect_);
+  text_settings_rect_.x = settings_menu_rect_.x + (settings_menu_rect_.w - text_settings_rect_.w) / 2;
+  text_settings_rect_.y = settings_menu_rect_.y + (settings_menu_rect_.h - text_settings_rect_.h) / 2;
+  drawButton(settings_menu_rect_, text_texture_settings, text_settings_rect_, hovered_settings, event);
+  SDL_DestroyTexture(text_texture_settings);
 
   SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
   SDL_SetCursor(cursor);
