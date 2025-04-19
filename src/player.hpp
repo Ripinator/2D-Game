@@ -6,13 +6,14 @@
 #include "window.hpp"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <unordered_map>
 
 enum class PlayerState 
 {
-  Standing,
-  WalkRight,
-  WalkLeft,
-  Jumping
+  Standing = 0,
+  Jumping = 4,
+  WalkLeft = 2,
+  WalkRight = 3
 };
 
 class Player
@@ -28,6 +29,7 @@ class Player
     int jump_strength_ = -20;
     bool is_jumping_ = false;
 
+    std::unordered_map<PlayerState, int> frame_counts_;
     SDL_Rect standing_rect_;
     int frame_width_;
     int frame_height_;
@@ -43,6 +45,7 @@ class Player
     Player(Window &window, const SDL_Rect &floor_rect);
     void update();
     void render();
+    void animate();
     void handleInput(const SDL_Event &event);
 };
 
