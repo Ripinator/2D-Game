@@ -31,7 +31,13 @@ SDL_Texture* SettingsMenu::createText(const std::string& text, TTF_Font* font, S
 
 void SettingsMenu::handleEvent(const SDL_Event &event)
 {
-
+  if (event.type == SDL_KEYDOWN)
+  {
+    if (event.key.keysym.sym == SDLK_ESCAPE)
+    {
+      game_state_ = GameState::Menu;
+    }
+  }
 }
 
 void SettingsMenu::update()

@@ -102,6 +102,7 @@ SDL_Texture* StartMenu::createText(const std::string& text, TTF_Font* font, SDL_
 
 void StartMenu::render() 
 {
+  SDL_ShowCursor(SDL_ENABLE); 
   int mouse_x, mouse_y;
   SDL_GetMouseState(&mouse_x, &mouse_y);
   SDL_Point mouse_point = {mouse_x, mouse_y};

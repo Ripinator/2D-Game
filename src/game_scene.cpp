@@ -1,4 +1,5 @@
 #include "game_scene.hpp"
+#include "game.hpp"
 
 GameScene::GameScene(Window &window, GameState &game_state)
 : renderer_(window.getRenderer()), game_state_(game_state), player_(window, floor_rect_)
@@ -37,6 +38,13 @@ void GameScene::render()
 void GameScene::handleEvent(const SDL_Event& event) 
 {
   player_.handleInput(event);
+  if (event.type == SDL_KEYDOWN)
+  {
+    if (event.key.keysym.sym == SDLK_ESCAPE)
+    {
+      game_state_ = GameState::Menu;
+    }
+  }
 }
 
 void GameScene::update() 
