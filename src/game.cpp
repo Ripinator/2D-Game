@@ -44,7 +44,7 @@ void gameLoop(Window &window)
     if (state != previousState)
     {
       // i only switch into the play state if the state is play and iam currently in the startmenu
-      if (state == GameState::Play && dynamic_cast<StartMenu*>(currentScene.get()))
+      if (state == GameState::Play)
       {
         currentScene = std::make_unique<GameScene>(window, state);
       }

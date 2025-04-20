@@ -1,0 +1,30 @@
+{
+  "player_spawn": { "x": 0, "y": 640 },
+  "backgrounds": [
+    "assets/level_1_background/1.png",
+    "assets/level_1_background/2.png",
+    "assets/level_1_background/3.png",
+    "assets/level_1_background/4.png"
+  ],
+  "enemies": [
+    {
+      "type": "NightBorne",
+      "x": 1000,
+      "y": 640
+    },
+    {
+      "type": "NightBorne",
+      "x": 1500,
+      "y": 640
+    }
+  ],
+  "platforms": [
+    {
+      "type": "level_1_tile",
+      "x": 400,
+      "y": 600,
+      "width": 200,
+      "height": 40
+    }
+  ]
+}
