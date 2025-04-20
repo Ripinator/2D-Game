@@ -21,10 +21,9 @@ class NightBorne : public Enemy
     std::unordered_map<EnemyState, int> frame_counts_;
 
   public:
-    NightBorne(Window &window, const SDL_Rect &floor_rect);
+    NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect);
 
     void update() override;
-
     void render() override;
 };
 
