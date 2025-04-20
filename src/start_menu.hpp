@@ -23,6 +23,10 @@ class StartMenu : public Scene
     TTF_Font *font_;
     GameState &game_state_;
     SDL_Event event;
+    SDL_Texture *text_texture_header_;
+    SDL_Texture *text_texture_start_;
+    SDL_Texture *text_texture_quit_;
+    SDL_Texture *text_texture_settings_;
     SDL_Texture *blue_background_texture_;
     SDL_Texture *white_clouds_texture_;
     SDL_Texture *blue_clouds_texture_;
@@ -35,6 +39,7 @@ class StartMenu : public Scene
 
   public:
     StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state);
+    ~StartMenu();
     void handleEvent(const SDL_Event &event) override;
     void update() override;
     void drawButton(SDL_Rect &rect, SDL_Texture *texture, SDL_Rect &text_rect, bool hovered, SDL_Event &event);

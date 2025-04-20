@@ -34,6 +34,9 @@ StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, Game
   SDL_FreeSurface(grass_2_surface_);
   SDL_FreeSurface(grass_3_surface_);
 
+  SDL_Color white = {255, 255, 255, 255};
+  SDL_Color black = {0, 0, 0, 255};
+
   int rect_width = 800;
   int rect_height = 500;
 
@@ -61,6 +64,27 @@ StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, Game
   settings_menu_rect_.h = rect_height / 12;
   settings_menu_rect_.x = menu_rect_.x + (menu_rect_.w - quit_rect_.w) / 2;
   settings_menu_rect_.y = menu_rect_.y + (menu_rect_.h - quit_rect_.h) / 2;
+
+  text_texture_header_ = createText("Sworld Lord", header_font_, white, text_header_rect_);
+  text_texture_start_ = createText("Start", font_, black, text_start_rect_);
+  text_texture_quit_ = createText("Quit", font_, black, text_quit_rect_);
+  text_texture_settings_ = createText("Settings", font_, black, text_settings_rect_);
+}
+
+StartMenu::~StartMenu()
+{
+  SDL_DestroyTexture(blue_background_texture_);
+  SDL_DestroyTexture(white_clouds_texture_);
+  SDL_DestroyTexture(blue_clouds_texture_);
+  SDL_DestroyTexture(water_texture_);
+  SDL_DestroyTexture(grass_1_texture_);
+  SDL_DestroyTexture(grass_2_texture_);
+  SDL_DestroyTexture(grass_3_texture_);
+
+  SDL_DestroyTexture(text_texture_header_);
+  SDL_DestroyTexture(text_texture_start_);
+  SDL_DestroyTexture(text_texture_quit_);
+  SDL_DestroyTexture(text_texture_settings_);
 }
 
 void StartMenu::setType(GameState game_state)
@@ -132,7 +156,6 @@ void StartMenu::render()
   int mouse_x, mouse_y;
   SDL_GetMouseState(&mouse_x, &mouse_y);
   SDL_Point mouse_point = {mouse_x, mouse_y};
-  SDL_Event event;
 
   bool hovered_quit = SDL_PointInRect(&mouse_point, &quit_rect_);
   bool hovered_start = SDL_PointInRect(&mouse_point, &start_rect_);
@@ -146,7 +169,6 @@ void StartMenu::render()
   renderScaleScrollingTexture(renderer_, grass_2_texture_, screen_width_, screen_height_, 15);
   renderScaleScrollingTexture(renderer_, grass_3_texture_, screen_width_, screen_height_, 15);
 
-
   SDL_SetRenderDrawColor(renderer_, 255, 165, 0, 255);
   SDL_RenderFillRect(renderer_, &border_rect_);
   SDL_RenderDrawRect(renderer_, &border_rect_);
@@ -155,34 +177,19 @@ void StartMenu::render()
   SDL_RenderFillRect(renderer_, &menu_rect_);
   SDL_RenderDrawRect(renderer_, &menu_rect_);
 
-  SDL_Color white = {255, 255, 255, 255};
-  SDL_Texture *text_texture_header = createText("Sworld Lord", header_font_, white, text_header_rect_);
   text_header_rect_.x = menu_rect_.x + (menu_rect_.w - text_header_rect_.w) / 2;
   text_header_rect_.y = menu_rect_.y + 40;
-  SDL_RenderCopy(renderer_, text_texture_header, nullptr, &text_header_rect_);
-  SDL_DestroyTexture(text_texture_header);
+  SDL_RenderCopy(renderer_, text_texture_header_, nullptr, &text_header_rect_);
 
-  SDL_Color black = {0, 0, 0, 255};
-  SDL_Texture *text_texture_start = createText("Start", font_, black, text_start_rect_);
   text_start_rect_.x = start_rect_.x + (start_rect_.w - text_start_rect_.w) / 2;
   text_start_rect_.y = start_rect_.y + (start_rect_.h - text_start_rect_.h) / 2;
-  drawButton(start_rect_, text_texture_start, text_start_rect_, hovered_start, event);
-  SDL_DestroyTexture(text_texture_start);
+  drawButton(start_rect_, text_texture_start_, text_start_rect_, hovered_start, event);
 
-  SDL_Texture *text_texture_quit = createText("Quit", font_, black, text_quit_rect_);
   text_quit_rect_.x = quit_rect_.x + (quit_rect_.w - text_quit_rect_.w) / 2;
   text_quit_rect_.y = quit_rect_.y + (quit_rect_.h - text_quit_rect_.h) / 2;
-  drawButton(quit_rect_, text_texture_quit, text_quit_rect_, hovered_quit, event);
-  SDL_DestroyTexture(text_texture_quit);
+  drawButton(quit_rect_, text_texture_quit_, text_quit_rect_, hovered_quit, event);
 
-  SDL_Texture *text_texture_settings = createText("Settings", font_, black, text_settings_rect_);
   text_settings_rect_.x = settings_menu_rect_.x + (settings_menu_rect_.w - text_settings_rect_.w) / 2;
   text_settings_rect_.y = settings_menu_rect_.y + (settings_menu_rect_.h - text_settings_rect_.h) / 2;
-  drawButton(settings_menu_rect_, text_texture_settings, text_settings_rect_, hovered_settings, event);
-  SDL_DestroyTexture(text_texture_settings);
-
-
-  SDL_Cursor *cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-  SDL_SetCursor(cursor);
-  SDL_FreeCursor(cursor);
+  drawButton(settings_menu_rect_, text_texture_settings_, text_settings_rect_, hovered_settings, event);
 }

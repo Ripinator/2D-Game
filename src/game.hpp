@@ -14,7 +14,8 @@ enum class GameState
   Play = 2,
   Pause = 3,
   Settings = 4,
-  Quit = 5
+  Quit = 5,
+  None = 6
 };
 
 void gameLoop(Window &window);
