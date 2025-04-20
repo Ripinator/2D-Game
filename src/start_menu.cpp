@@ -1,18 +1,44 @@
 #include "start_menu.hpp"
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include "window.hpp"
+#include "utils/utils.hpp"
 // iam so sorry this file is filled with horrible code
 
 StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state) 
 : renderer_(window.getRenderer()), header_font_(header_font), font_(font), game_state_(game_state)
 {
-  int screen_width = window.getScreenWidth();
-  int screen_height = window.getScreenHeight();
+  screen_width_ = window.getScreenWidth();
+  screen_height_ = window.getScreenHeight();
+  SDL_Surface *blue_background_surface_ = IMG_Load("assets/Background/1.png");
+  SDL_Surface *white_clouds_surface_ = IMG_Load("assets/Background/2.png");
+  SDL_Surface *blue_clouds_surface_ = IMG_Load("assets/Background/3.png");
+  SDL_Surface *water_surface_ = IMG_Load("assets/Background/4.png");
+  SDL_Surface *grass_1_surface_ = IMG_Load("assets/Background/5.png");
+  SDL_Surface *grass_2_surface_ = IMG_Load("assets/Background/6.png");
+  SDL_Surface *grass_3_surface_ = IMG_Load("assets/Background/7.png");
+
+  blue_background_texture_ = SDL_CreateTextureFromSurface(renderer_, blue_background_surface_);
+  white_clouds_texture_ = SDL_CreateTextureFromSurface(renderer_, white_clouds_surface_);
+  blue_clouds_texture_ = SDL_CreateTextureFromSurface(renderer_, blue_clouds_surface_);
+  water_texture_ = SDL_CreateTextureFromSurface(renderer_, water_surface_);
+  grass_1_texture_ = SDL_CreateTextureFromSurface(renderer_, grass_1_surface_);
+  grass_2_texture_ = SDL_CreateTextureFromSurface(renderer_, grass_2_surface_);
+  grass_3_texture_ = SDL_CreateTextureFromSurface(renderer_, grass_3_surface_);
+
+  SDL_FreeSurface(blue_background_surface_);
+  SDL_FreeSurface(white_clouds_surface_);
+  SDL_FreeSurface(blue_clouds_surface_);
+  SDL_FreeSurface(water_surface_);
+  SDL_FreeSurface(grass_1_surface_);
+  SDL_FreeSurface(grass_2_surface_);
+  SDL_FreeSurface(grass_3_surface_);
+
   int rect_width = 800;
   int rect_height = 500;
 
-  menu_rect_.x = (screen_width - rect_width) / 2;
-  menu_rect_.y = (screen_height - rect_height) / 2;
+  menu_rect_.x = (screen_width_ - rect_width) / 2;
+  menu_rect_.y = (screen_height_ - rect_height) / 2;
   menu_rect_.w = rect_width;
   menu_rect_.h = rect_height;
 
@@ -42,7 +68,7 @@ void StartMenu::setType(GameState game_state)
   game_state_ = game_state;
 }
 
-void StartMenu::handleEvent(const SDL_Event& event) 
+void StartMenu::handleEvent(const SDL_Event &event) 
 {
   int mouse_x, mouse_y;
   SDL_GetMouseState(&mouse_x, &mouse_y);
@@ -90,10 +116,10 @@ void StartMenu::drawButton(SDL_Rect &rect, SDL_Texture *texture, SDL_Rect &textR
   SDL_RenderCopy(renderer_, texture, nullptr, &textRect);
 }
 
-SDL_Texture* StartMenu::createText(const std::string& text, TTF_Font* font, SDL_Color color, SDL_Rect& outRect)
+SDL_Texture *StartMenu::createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect &outRect)
 {
-  SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), color);
-  SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer_, surface);
+  SDL_Surface *surface = TTF_RenderText_Blended(font, text.c_str(), color);
+  SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer_, surface);
   outRect.w = surface->w;
   outRect.h = surface->h;
   SDL_FreeSurface(surface);
@@ -112,8 +138,14 @@ void StartMenu::render()
   bool hovered_start = SDL_PointInRect(&mouse_point, &start_rect_);
   bool hovered_settings = SDL_PointInRect(&mouse_point, &settings_menu_rect_);
 
-  SDL_SetRenderDrawColor(renderer_, 135, 206, 235, 255);
-  SDL_RenderClear(renderer_);
+  renderScaleTexture(renderer_, blue_background_texture_, screen_width_, screen_height_);
+  renderScaleTexture(renderer_, white_clouds_texture_, screen_width_, screen_height_);
+  renderScaleTexture(renderer_, water_texture_, screen_width_, screen_height_);
+  renderScaleScrollingTexture(renderer_, blue_clouds_texture_, screen_width_, screen_height_, 50);
+  renderScaleScrollingTexture(renderer_, grass_1_texture_, screen_width_, screen_height_, 15);
+  renderScaleScrollingTexture(renderer_, grass_2_texture_, screen_width_, screen_height_, 15);
+  renderScaleScrollingTexture(renderer_, grass_3_texture_, screen_width_, screen_height_, 15);
+
 
   SDL_SetRenderDrawColor(renderer_, 255, 165, 0, 255);
   SDL_RenderFillRect(renderer_, &border_rect_);
@@ -149,7 +181,8 @@ void StartMenu::render()
   drawButton(settings_menu_rect_, text_texture_settings, text_settings_rect_, hovered_settings, event);
   SDL_DestroyTexture(text_texture_settings);
 
-  SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+
+  SDL_Cursor *cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
   SDL_SetCursor(cursor);
   SDL_FreeCursor(cursor);
 }

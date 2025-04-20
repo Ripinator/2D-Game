@@ -23,7 +23,7 @@ class SettingsMenu : public Scene
     void handleEvent(const SDL_Event &event) override;
     void update() override;
     void drawButton(SDL_Rect &rect, SDL_Texture *texture, SDL_Rect &text_rect, bool hovered, SDL_Event &event);
-    SDL_Texture *createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect& outRect);
+    SDL_Texture *createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect &outRect);
     void render() override;
 };
 
