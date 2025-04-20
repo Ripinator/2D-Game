@@ -5,8 +5,8 @@
 
 using json = nlohmann::json;
 
-LevelBuilder::LevelBuilder(SDL_Renderer* renderer, int screen_width, int screen_height)
-: renderer_(renderer), screen_width_(screen_width), screen_height_(screen_height)
+LevelBuilder::LevelBuilder(Window &window, int screen_width, int screen_height, SDL_Rect floor_rect)
+: window_(window), renderer_(window.getRenderer()), screen_width_(screen_width), screen_height_(screen_height), floor_rect_(floor_rect)
 {}
 
 void LevelBuilder::loadLevel(int levelId)
@@ -38,7 +38,7 @@ void LevelBuilder::loadLevel(int levelId)
   for (const auto& platform : platforms_)
   {
     SDL_SetRenderDrawColor(renderer_, 80, 80, 80, 255);
-    SDL_RenderFillRect(renderer_, &platform);
+    SDL_RenderFillRect(renderer_, &platform); 
   }
 
   enemies_.clear();
@@ -50,7 +50,7 @@ void LevelBuilder::loadLevel(int levelId)
 
     if (type == "NightBorne") 
     {
-      enemies_.emplace_back(std::make_unique<NightBorne>(renderer_, x, y));
+      enemies_.emplace_back(std::make_unique<NightBorne>(window_, x, y, floor_rect_));
     }
   }
 }
