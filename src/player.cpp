@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-Player::Player(Window &window, const SDL_Rect &floor_rect) 
+Player::Player(Window &window) 
   : renderer_(window.getRenderer()),
     velocity_x_(0),
     velocity_y_(0),
@@ -12,14 +12,15 @@ Player::Player(Window &window, const SDL_Rect &floor_rect)
     current_frame_(0), 
     animation_timer_(0),
     animation_speed_(16),
-    floor_rect_(floor_rect),
     is_attacking_(false)
 {
+  player_rect_.h = frame_width_ * 3;
+  player_rect_.w = frame_height_ * 3;
+
   world_x_ = 0;
   int screen_width = window.getScreenWidth();
   int screen_center_x = screen_width / 2 - player_rect_.w / 2;
-  player_rect_.h = frame_width_ * 3;
-  player_rect_.w = frame_height_ * 3;
+  
   player_rect_.x = screen_center_x;
   player_rect_.y = window.getScreenHeight() - player_rect_.h - (window.getScreenHeight() / 6);
 

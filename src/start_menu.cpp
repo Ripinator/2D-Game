@@ -10,13 +10,13 @@ StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, Game
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();
-  SDL_Surface *blue_background_surface_ = IMG_Load("assets/Background/1.png");
-  SDL_Surface *white_clouds_surface_ = IMG_Load("assets/Background/2.png");
-  SDL_Surface *blue_clouds_surface_ = IMG_Load("assets/Background/3.png");
-  SDL_Surface *water_surface_ = IMG_Load("assets/Background/4.png");
-  SDL_Surface *grass_1_surface_ = IMG_Load("assets/Background/5.png");
-  SDL_Surface *grass_2_surface_ = IMG_Load("assets/Background/6.png");
-  SDL_Surface *grass_3_surface_ = IMG_Load("assets/Background/7.png");
+  SDL_Surface *blue_background_surface_ = IMG_Load("assets/starting_menu_background/1.png");
+  SDL_Surface *white_clouds_surface_ = IMG_Load("assets/starting_menu_background/2.png");
+  SDL_Surface *blue_clouds_surface_ = IMG_Load("assets/starting_menu_background/3.png");
+  SDL_Surface *water_surface_ = IMG_Load("assets/starting_menu_background/4.png");
+  SDL_Surface *grass_1_surface_ = IMG_Load("assets/starting_menu_background/5.png");
+  SDL_Surface *grass_2_surface_ = IMG_Load("assets/starting_menu_background/6.png");
+  SDL_Surface *grass_3_surface_ = IMG_Load("assets/starting_menu_background/7.png");
 
   blue_background_texture_ = SDL_CreateTextureFromSurface(renderer_, blue_background_surface_);
   white_clouds_texture_ = SDL_CreateTextureFromSurface(renderer_, white_clouds_surface_);

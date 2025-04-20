@@ -46,7 +46,7 @@ class Player
     int screen_height;
 
   public:
-    Player(Window &window, const SDL_Rect &floor_rect);
+    Player(Window &window);
     void update();
     void render();
     void animate();
