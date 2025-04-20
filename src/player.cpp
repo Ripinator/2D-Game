@@ -15,10 +15,15 @@ Player::Player(Window &window, const SDL_Rect &floor_rect)
     floor_rect_(floor_rect),
     is_attacking_(false)
 {
+  world_x_ = 0;
+  int screen_width = window.getScreenWidth();
+  int screen_center_x = screen_width / 2 - player_rect_.w / 2;
   player_rect_.h = frame_width_ * 3;
   player_rect_.w = frame_height_ * 3;
-  player_rect_.x = 700;
+  player_rect_.x = screen_center_x;
   player_rect_.y = window.getScreenHeight() - player_rect_.h - (window.getScreenHeight() / 6);
+
+  int camera_offset_x = player_rect_.x - screen_center_x;
 
   screen_height = window.getScreenHeight();
 
@@ -106,7 +111,7 @@ void Player::update()
     animate();
   }  
   
-  player_rect_.x += velocity_x_;
+  world_x_ += velocity_x_;
 
   velocity_y_ += gravity_;
   player_rect_.y += velocity_y_;

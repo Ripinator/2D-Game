@@ -23,6 +23,15 @@ class StartMenu : public Scene
     TTF_Font *font_;
     GameState &game_state_;
     SDL_Event event;
+    SDL_Texture *blue_background_texture_;
+    SDL_Texture *white_clouds_texture_;
+    SDL_Texture *blue_clouds_texture_;
+    SDL_Texture *water_texture_;
+    SDL_Texture *grass_1_texture_;
+    SDL_Texture *grass_2_texture_;
+    SDL_Texture *grass_3_texture_; 
+    int screen_width_;
+    int screen_height_;
 
   public:
     StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state);

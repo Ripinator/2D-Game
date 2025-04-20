@@ -48,7 +48,7 @@ void SettingsMenu::update()
 void SettingsMenu::render()
 {
   SDL_ShowCursor(SDL_ENABLE);
-  
+    
   int mouse_x, mouse_y;
   SDL_GetMouseState(&mouse_x, &mouse_y);
   SDL_Point mouse_point = {mouse_x, mouse_y};
