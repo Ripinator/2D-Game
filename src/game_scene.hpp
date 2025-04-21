@@ -31,8 +31,6 @@ class GameScene : public Scene
     SDL_Texture* background_layer_3_texture_;
     SDL_Texture* background_layer_4_texture_;
 
-    
-
   public:
     GameScene(Window &window, GameState &game_state);
     void render() override;

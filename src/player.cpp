@@ -126,10 +126,8 @@ void Player::update()
     animate();
   }
 
-  // --- Gravity ---
   velocity_y_ += gravity_;
 
-  // --- Horizontal Movement ---
   SDL_Rect future_position_x = {
     collision_box_.x + velocity_x_,
     collision_box_.y,

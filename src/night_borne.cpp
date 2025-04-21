@@ -3,17 +3,26 @@
 NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
 : Enemy(window, floor_rect)
 {
+  frame_width_ = 64;
+  frame_height_ = 64;
+  velocity_x_ = 0;
+  velocity_y_ = 0;
   health_ = 200;
   damage_ = 15;
   speed_ = 4;
-  SDL_Surface *sprite_surface_ = IMG_Load("assets/NightBorne.png");
+  sprite_surface_ = IMG_Load("assets/enemies/NightBorne.png");
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
 
   enemy_rect_.x = x;
   enemy_rect_.y = y;
-  enemy_rect_.w = 64;
+  enemy_rect_.w = 80;
   enemy_rect_.h = 64;
+
+  collision_box_.x = x;
+  collision_box_.y = y;
+  collision_box_.w = 80;
+  collision_box_.h = 64;
 
   frame_counts_[EnemyState::Idle] = 9;
   frame_counts_[EnemyState::Walking] = 6;
@@ -22,12 +31,128 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   frame_counts_[EnemyState::IsDead] = 23; 
 }
 
+void NightBorne::setTiles(std::vector<Tile> *tiles)
+{
+  tiles_ = tiles;
+}
+
+void NightBorne::animate()
+{
+  animation_timer_++;
+  if (animation_timer_ >= animation_speed_)
+  {
+    int max_frames = frame_counts_[animation_state_];
+    current_frame_++;
+    current_frame_ %= max_frames;
+  
+    animation_timer_ = 0;
+  }
+}
+
+void NightBorne::setEnemyPosition(int position_x, int position_y)
+{
+  collision_box_.x = position_x;
+  collision_box_.y = position_y;
+}
+
 void NightBorne::update()
 {
+  if (is_attacking_)
+  {
+    animation_state_ = EnemyState::Attack;
+    animate();
+  }
+  else
+  {
+    velocity_x_ = 0;
+    animation_state_ = EnemyState::Idle;
+    animate();
+  }
 
+  //Horizontal movement
+  SDL_Rect future_position_x = {
+    collision_box_.x + velocity_x_,
+    collision_box_.y,
+    collision_box_.w,
+    collision_box_.h
+  };
+
+  if (tiles_)
+  {
+    for (const Tile &tile : *tiles_)
+    {
+      if (!tile.solid) continue;
+
+      SDL_Rect tile_rect = tile.destRect;
+
+      if (SDL_HasIntersection(&future_position_x, &tile_rect))
+      {
+        if (velocity_x_ > 0)
+          future_position_x.x = tile_rect.x - future_position_x.w;
+        else if (velocity_x_ < 0)
+          future_position_x.x = tile_rect.x + tile_rect.w;
+
+        velocity_x_ = 0;
+      }
+    }
+  }
+
+  // --- Vertical Movement ---
+  SDL_Rect future_position_y = {
+    collision_box_.x,
+    collision_box_.y + velocity_y_,
+    collision_box_.w,
+    collision_box_.h
+  };
+
+  if (tiles_)
+  {
+    for (const Tile &tile : *tiles_)
+    {
+      if (!tile.solid) continue;
+
+      SDL_Rect tile_rect = tile.destRect;
+
+      if (SDL_HasIntersection(&future_position_y, &tile_rect))
+      {
+        if (velocity_y_ > 0)
+        {
+          future_position_y.y = tile_rect.y - future_position_y.h;
+          is_falling_ = false;
+        }
+        else if (velocity_y_ < 0)
+        {
+          future_position_y.y = tile_rect.y + tile_rect.h;
+        }
+        velocity_y_ = 0;
+      }
+    }
+  }
+
+
+  collision_box_.x = future_position_x.x;
+  collision_box_.y = future_position_y.y;
 }
 
 void NightBorne::render()
 {
-  
+  SDL_Rect src_rect;
+  src_rect.x = current_frame_ * (frame_width_);
+  src_rect.y = static_cast<int>(animation_state_) * frame_height_;
+  src_rect.w = frame_width_;
+  src_rect.h = frame_height_;
+
+  SDL_Rect dest_rect;
+  dest_rect.x = collision_box_.x - camera_x_;
+  dest_rect.y = collision_box_.y - camera_y_ + 64;
+  dest_rect.w = frame_width_* 3;
+  dest_rect.h = frame_height_ * 3;
+
+  SDL_RenderCopy(renderer_, sprite_, &src_rect, &dest_rect);
+
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
+  SDL_Rect debug_hitbox = collision_box_;
+  debug_hitbox.x -= camera_x_;
+  debug_hitbox.y -= camera_y_;
+  SDL_RenderDrawRect(renderer_, &debug_hitbox);
 }

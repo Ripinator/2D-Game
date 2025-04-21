@@ -12,6 +12,16 @@ GameScene::GameScene(Window &window, GameState &game_state)
   level_data_ = builder.loadLevel(1);
   player_.setTiles(&level_data_.tiles);
 
+  for (size_t i = 0; i < level_data_.enemies.size(); ++i)
+  {
+    if (i < level_data_.enemy_spawn_.size())
+    {
+      SDL_Point spawn = level_data_.enemy_spawn_[i];
+      level_data_.enemies[i]->setTiles(&level_data_.tiles);
+      level_data_.enemies[i]->setEnemyPosition(spawn.x, spawn.y);
+    }
+  }
+
   player_.setPlayerPosition(level_data_.playerSpawn.x, level_data_.playerSpawn.y);
 }
 
@@ -39,6 +49,11 @@ void GameScene::render()
     SDL_RenderCopy(renderer_, tile.texture, nullptr, &world_rect);
   }
 
+  for (auto &enemy : level_data_.enemies)
+  {
+    enemy->render();
+  }
+
   // You can draw the hitbox for debugging with the following
 
   // SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
@@ -48,6 +63,7 @@ void GameScene::render()
   // SDL_RenderDrawRect(renderer_, &player_box);
 
   player_.render();  
+  
 }
 
 void GameScene::handleEvent(const SDL_Event& event) 
@@ -65,4 +81,9 @@ void GameScene::handleEvent(const SDL_Event& event)
 void GameScene::update() 
 {
   player_.update();
+
+  for (auto& enemy : level_data_.enemies)
+  {
+    enemy->update();
+  }
 }
