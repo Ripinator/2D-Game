@@ -24,9 +24,9 @@
     "DDDDDDDDDD........................................................................",
     "DDDDDDDDDD........................................................................",
     "DDDDDDDDDD........................................................................",
-    "DDDDDDDDDD.....................................................GGG................",
+    "DDDDDDDDDD.....................................................PPP................",
     "DDDDDDDDDD........................................................................",
-    "DDDDDDDDDDDDDDDDDDDGGGGGGGGGGGGGGGGGGGGGGGG...GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
+    "DDDDDDDDDDGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG...GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
     "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD...DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
     "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD...DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"
   ],
@@ -37,6 +37,10 @@
     },
     "D": {
       "path": "assets/level_1/level_1_tiles/Tile_11.png",
+      "solid": true
+    },
+    "P": {
+      "path": "assets/level_1/level_1_tiles/Tile_30.png",
       "solid": true
     }
   }
