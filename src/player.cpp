@@ -14,19 +14,14 @@ Player::Player(Window &window)
     animation_speed_(16),
     is_attacking_(false)
 {
-  player_rect_.h = frame_width_ * 3;
-  player_rect_.w = frame_height_ * 3;
+  screen_height_ = window.getScreenHeight();
+  screen_width_ = window.getScreenWidth();
 
-  world_x_ = 0;
-  int screen_width = window.getScreenWidth();
-  int screen_center_x = screen_width / 2 - player_rect_.w / 2;
-  
-  player_rect_.x = screen_center_x;
-  player_rect_.y = window.getScreenHeight() - player_rect_.h - (window.getScreenHeight() / 6);
+  render_size_.x = frame_width_ * 3;
+  render_size_.y = frame_height_ * 3;
 
-  int camera_offset_x = player_rect_.x - screen_center_x;
-
-  screen_height = window.getScreenHeight();
+  world_position_.x = 0;
+  world_position_.y = screen_height_ - render_size_.y - (screen_height_ / 6);
 
   SDL_Surface *surface = IMG_Load("assets/WarriorMan-Sheet.png");
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
@@ -78,6 +73,11 @@ void Player::animate()
   }
 }
 
+void Player::setPlayerPosition(int position_x, int position_y)
+{
+  world_position_.x = position_x;
+  world_position_.y = position_y;
+}
 
 void Player::update()
 {
@@ -112,17 +112,16 @@ void Player::update()
     animate();
   }  
   
-  world_x_ += velocity_x_;
-
+  world_position_.x += velocity_x_;
   velocity_y_ += gravity_;
-  player_rect_.y += velocity_y_;
+  world_position_.y += velocity_y_;
 
-  int floor_height = screen_height / 6;
-  int ground_level = screen_height - floor_height;
+  int floor_height = screen_height_ / 6;
+  int ground_level = screen_height_ - floor_height;
 
-  if (player_rect_.y + player_rect_.h >= ground_level)
+  if (world_position_.y + render_size_.y >= ground_level)
   {
-    player_rect_.y = ground_level - player_rect_.h;
+    world_position_.y = ground_level - render_size_.y;
     velocity_y_ = 0;
     is_jumping_ = false;
   }
@@ -137,10 +136,10 @@ void Player::render()
   src_rect.h = frame_height_;
 
   SDL_Rect dest_rect;
-  dest_rect.x = player_rect_.x;
-  dest_rect.y = player_rect_.y + 48;
-  dest_rect.w = player_rect_.w;
-  dest_rect.h = player_rect_.h;
+  dest_rect.x = screen_width_ / 2 - render_size_.x / 2;
+  dest_rect.y = screen_height_ / 2 - render_size_.y / 2 + 48;
+  dest_rect.w = render_size_.x;
+  dest_rect.h = render_size_.y;
 
   SDL_RenderCopy(renderer_, sprite_sheet_, &src_rect, &dest_rect);
 }

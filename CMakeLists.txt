@@ -36,8 +36,10 @@ target_link_libraries(Swordlord
     SDL2 SDL2_ttf SDL2_image
 )
 
-# Copy assets directory after build
+# Copy assets and configs directories after build
 add_custom_command(TARGET Swordlord POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:Swordlord>/assets
+            ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:Swordlord>/assets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/configs $<TARGET_FILE_DIR:Swordlord>/configs
 )

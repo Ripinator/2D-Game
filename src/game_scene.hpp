@@ -10,6 +10,7 @@
 #include "game.hpp"
 #include "window.hpp"
 #include "utils/utils.hpp"
+#include "level_builder.hpp"
 #include <memory>
 #include <SDL2/SDL_ttf.h>
 #include <vector>
@@ -22,9 +23,8 @@ class GameScene : public Scene
     SDL_Renderer *renderer_;
     GameState &game_state_;
     SDL_Rect background_rect_;
-    //SDL_Rect floor_rect_;
     Player player_;
-    std::vector<std::unique_ptr<Enemy>> enemies_;
+    LevelData level_data_;
 
     SDL_Texture* background_layer_1_texture_;
     SDL_Texture* background_layer_2_texture_;
