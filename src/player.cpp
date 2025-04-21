@@ -17,11 +17,16 @@ Player::Player(Window &window)
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();
 
-  render_size_.x = frame_width_ * 3;
-  render_size_.y = frame_height_ * 3;
+  collision_box_.x = frame_width_;
+  collision_box_.y = frame_height_;
 
   world_position_.x = 0;
-  world_position_.y = screen_height_ - render_size_.y - (screen_height_ / 6);
+  world_position_.y = screen_height_ - frame_height_ - (screen_height_ / 6);
+
+  collision_box_.w = frame_width_;
+  collision_box_.h = frame_height_;
+  collision_box_.x = world_position_.x;
+  collision_box_.y = world_position_.y;
 
   SDL_Surface *surface = IMG_Load("assets/WarriorMan-Sheet.png");
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
@@ -48,6 +53,11 @@ void Player::handleInput(const SDL_Event &event)
   {
     is_attacking_ = true;
   }
+}
+
+void Player::setTiles(const std::vector<Tile> *tiles)
+{
+  tiles_ = tiles;
 }
 
 void Player::animate()
@@ -77,12 +87,16 @@ void Player::setPlayerPosition(int position_x, int position_y)
 {
   world_position_.x = position_x;
   world_position_.y = position_y;
+
+  collision_box_.x = position_x;
+  collision_box_.y = position_y;
 }
 
 void Player::update()
 {
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
+  // --- Input ---
   if (is_attacking_)
   {
     animation_state_ = PlayerState::AttackMouseLeft;
@@ -110,25 +124,92 @@ void Player::update()
     velocity_x_ = 0;
     animation_state_ = PlayerState::Standing;
     animate();
-  }  
-  
-  world_position_.x += velocity_x_;
-  velocity_y_ += gravity_;
-  world_position_.y += velocity_y_;
-
-  int floor_height = screen_height_ / 6;
-  int ground_level = screen_height_ - floor_height;
-
-  if (world_position_.y + render_size_.y >= ground_level)
-  {
-    world_position_.y = ground_level - render_size_.y;
-    velocity_y_ = 0;
-    is_jumping_ = false;
   }
+
+  // --- Gravity ---
+  velocity_y_ += gravity_;
+
+  // --- Horizontal Movement ---
+  SDL_Rect future_position_x = {
+    collision_box_.x + velocity_x_,
+    collision_box_.y,
+    collision_box_.w,
+    collision_box_.h
+  };
+
+  if (tiles_)
+  {
+    for (const Tile &tile : *tiles_)
+    {
+      if (!tile.solid) continue;
+
+      SDL_Rect tile_rect = tile.destRect;
+
+      if (SDL_HasIntersection(&future_position_x, &tile_rect))
+      {
+        if (velocity_x_ > 0)
+          future_position_x.x = tile_rect.x - future_position_x.w;
+        else if (velocity_x_ < 0)
+          future_position_x.x = tile_rect.x + tile_rect.w;
+
+        velocity_x_ = 0;
+      }
+    }
+  }
+
+  world_position_.x = future_position_x.x;
+
+  // --- Vertical Movement ---
+  SDL_Rect future_position_y = {
+    collision_box_.x,
+    collision_box_.y + velocity_y_,
+    collision_box_.w,
+    collision_box_.h
+  };
+
+  if (tiles_)
+  {
+    for (const Tile &tile : *tiles_)
+    {
+      if (!tile.solid) continue;
+
+      SDL_Rect tile_rect = tile.destRect;
+
+      if (SDL_HasIntersection(&future_position_y, &tile_rect))
+      {
+        if (velocity_y_ > 0)
+        {
+          // landing on top
+          future_position_y.y = tile_rect.y - future_position_y.h;
+          is_jumping_ = false;
+        }
+        else if (velocity_y_ < 0)
+        {
+          // hitting head
+          future_position_y.y = tile_rect.y + tile_rect.h;
+        }
+
+        velocity_y_ = 0;
+      }
+    }
+  }
+
+  collision_box_.x = future_position_x.x;
+  collision_box_.y = future_position_y.y;
+
+  world_position_.x = collision_box_.x;
+  world_position_.y = collision_box_.y;
+}
+
+SDL_Rect Player::getCollisionBox() const 
+{
+  return collision_box_;
 }
 
 void Player::render()
 {
+  const int scale = 3;
+
   SDL_Rect src_rect;
   src_rect.x = current_frame_ * (frame_width_ + 16);
   src_rect.y = static_cast<int>(animation_state_) * frame_height_;
@@ -136,10 +217,10 @@ void Player::render()
   src_rect.h = frame_height_;
 
   SDL_Rect dest_rect;
-  dest_rect.x = screen_width_ / 2 - render_size_.x / 2;
-  dest_rect.y = screen_height_ / 2 - render_size_.y / 2 + 48;
-  dest_rect.w = render_size_.x;
-  dest_rect.h = render_size_.y;
+  dest_rect.x = world_position_.x - camera_x_ - 96;
+  dest_rect.y = world_position_.y - camera_y_ - 80;
+  dest_rect.w = frame_width_* scale;
+  dest_rect.h = frame_height_ * scale;
 
   SDL_RenderCopy(renderer_, sprite_sheet_, &src_rect, &dest_rect);
 }

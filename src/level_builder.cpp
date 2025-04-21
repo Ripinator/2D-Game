@@ -29,7 +29,7 @@ LevelData LevelBuilder::loadLevel(int levelId)
   for (const auto& bgPath : data["backgrounds"]) 
   {
     SDL_Surface* surface = IMG_Load(bgPath.get<std::string>().c_str());
-    if (surface) 
+    if (surface)
     {
       levelData.backgrounds.push_back(SDL_CreateTextureFromSurface(renderer_, surface));
       SDL_FreeSurface(surface);
