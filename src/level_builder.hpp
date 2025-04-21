@@ -7,16 +7,11 @@
 #include <memory>
 #include <SDL2/SDL_ttf.h>
 #include <vector>
-
-struct Tile
-{
-  SDL_Texture *texture;
-  SDL_Rect destRect;
-  bool solid;
-};
+#include "tile.hpp"
 
 struct LevelData {
   SDL_Point playerSpawn;
+  std::vector<SDL_Point> enemy_spawn_;
   std::vector<std::unique_ptr<Enemy>> enemies;
   std::vector<Tile> tiles;
   std::vector<SDL_Texture*> backgrounds;

@@ -73,10 +73,8 @@ class Player
       camera_y_ = cam_y;
     }
 
-
     int getCameraOffsetX() const { return camera_x_; }
     int getCameraOffsetY() const { return camera_y_; }
-
 };
 
 #endif

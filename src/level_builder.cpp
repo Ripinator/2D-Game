@@ -86,6 +86,12 @@ LevelData LevelBuilder::loadLevel(int levelId)
     std::string type = enemy["type"];
     int x = enemy["x"];
     int y = enemy["y"];
+    SDL_Point enemy_position;
+
+    enemy_position.x = x;
+    enemy_position.y = y;
+
+    levelData.enemy_spawn_.push_back(enemy_position);
 
     if (type == "NightBorne") 
     {
