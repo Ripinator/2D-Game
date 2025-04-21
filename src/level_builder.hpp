@@ -8,6 +8,20 @@
 #include <SDL2/SDL_ttf.h>
 #include <vector>
 
+struct Tile
+{
+  SDL_Texture *texture;
+  SDL_Rect destRect;
+  bool solid;
+};
+
+struct LevelData {
+  SDL_Point playerSpawn;
+  std::vector<std::unique_ptr<Enemy>> enemies;
+  std::vector<Tile> tiles;
+  std::vector<SDL_Texture*> backgrounds;
+};
+
 class LevelBuilder
 {
   private:
@@ -20,14 +34,11 @@ class LevelBuilder
     SDL_Point player_spawn_;
     std::vector<std::unique_ptr<Enemy>> enemies_;
     std::vector<SDL_Texture*> background_layers_;
-    std::vector<SDL_Rect> platforms_;
+    std::vector<Tile> tiles_;
 
   public:
     LevelBuilder(Window &window, int screen_width, int screen_height, SDL_Rect floor_rect);
-    void loadLevel(int levelId);
-    SDL_Point &getPlayerSpawn() const;
-    std::vector<std::unique_ptr<Enemy>> &getEnemies() const;
-    std::vector<SDL_Texture*> &getBackgroundLayers() const;
+    LevelData loadLevel(int levelId);
 };
 
 #endif

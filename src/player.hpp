@@ -21,9 +21,9 @@ class Player
 {
   private:
     SDL_Renderer *renderer_;
-    SDL_Rect player_rect_;
-    SDL_Rect floor_rect_;
-    PlayerState animation_state_ = PlayerState::Standing;
+
+    SDL_Point world_position_;
+    SDL_Point render_size_;
     int velocity_x_ = 0;
     int velocity_y_ = 0;
     int gravity_ = 1;
@@ -31,19 +31,19 @@ class Player
     bool is_jumping_ = false;
     // I do this because I want to ensure you can only start another swing(attack) when the previous animation finished
     bool is_attacking_ = false;
-    int world_x_;
-
-    std::unordered_map<PlayerState, int> frame_counts_;
-    SDL_Rect standing_rect_;
+    
+    SDL_Texture *sprite_sheet_;
     int frame_width_;
     int frame_height_;
     int current_frame_;
-    int frame_count_;
     int animation_timer_;
     int animation_speed_;
-    SDL_Texture *sprite_sheet_;
 
-    int screen_height;
+    PlayerState animation_state_ = PlayerState::Standing;
+    std::unordered_map<PlayerState, int> frame_counts_;
+
+    int screen_height_;
+    int screen_width_;
 
   public:
     Player(Window &window);
@@ -51,6 +51,7 @@ class Player
     void render();
     void animate();
     void handleInput(const SDL_Event &event);
+    void setPlayerPosition(int position_x, int position_y);
 };
 
 #endif

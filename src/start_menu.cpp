@@ -166,8 +166,8 @@ void StartMenu::render()
   renderScaleTexture(renderer_, water_texture_, screen_width_, screen_height_);
   renderScaleScrollingTexture(renderer_, blue_clouds_texture_, screen_width_, screen_height_, 50);
   renderScaleScrollingTexture(renderer_, grass_1_texture_, screen_width_, screen_height_, 15);
-  renderScaleScrollingTexture(renderer_, grass_2_texture_, screen_width_, screen_height_, 15);
-  renderScaleScrollingTexture(renderer_, grass_3_texture_, screen_width_, screen_height_, 15);
+  renderScaleScrollingTexture(renderer_, grass_2_texture_, screen_width_, screen_height_, 12);
+  renderScaleScrollingTexture(renderer_, grass_3_texture_, screen_width_, screen_height_, 10);
 
   SDL_SetRenderDrawColor(renderer_, 255, 165, 0, 255);
   SDL_RenderFillRect(renderer_, &border_rect_);
