@@ -13,8 +13,7 @@ enum class PlayerState
 {
   Standing = 0,
   Jumping = 4,
-  WalkLeft = 2,
-  WalkRight = 3,
+  Walk = 3,
   AttackMouseLeft = 14
 };
 
@@ -26,6 +25,7 @@ class Player
     SDL_Point world_position_;
     SDL_Point render_size_;
     SDL_Rect collision_box_;
+    SDL_RendererFlip flip_;
     int velocity_x_ = 0;
     int velocity_y_ = 0;
     int gravity_ = 1;

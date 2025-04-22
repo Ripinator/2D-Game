@@ -20,6 +20,7 @@ class NightBorne : public Enemy
 {
   private:
     SDL_Rect collision_box_;
+    SDL_RendererFlip flip_;
     std::unordered_map<EnemyState, int> frame_counts_;
     std::vector<Tile> *tiles_;
     int frame_width_;
@@ -38,7 +39,7 @@ class NightBorne : public Enemy
   public:
     NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect);
 
-    void update() override;
+    void update(const SDL_Rect &player_box) override;
     void render() override;
     SDL_Rect getCollisionBox() override
     {

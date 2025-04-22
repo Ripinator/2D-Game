@@ -15,6 +15,7 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   is_falling_ = false;
   animation_speed_ = 10;
   animation_timer_ = 0;
+  flip_ = SDL_FLIP_NONE;
 
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
@@ -60,7 +61,7 @@ void NightBorne::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void NightBorne::update()
+void NightBorne::update(const SDL_Rect &player_box)
 {
   if (is_attacking_)
   {
@@ -71,10 +72,18 @@ void NightBorne::update()
   {
     velocity_x_ = 0;
     animation_state_ = EnemyState::Idle;
+    if (player_box.x < collision_box_.x)
+    {
+      flip_ = SDL_FLIP_HORIZONTAL;
+    }
+    else
+    {
+      flip_ = SDL_FLIP_NONE;
+    }
     animate();
   }
 
-  //Horizontal movement
+  //  Horizontal movement
   SDL_Rect future_position_x = {
     collision_box_.x + velocity_x_,
     collision_box_.y,
@@ -154,10 +163,18 @@ void NightBorne::render()
   src_rect.h = frame_height_;
 
   SDL_Rect dest_rect;
-  dest_rect.x = collision_box_.x - camera_x_ -96;
   dest_rect.y = collision_box_.y - camera_y_ - 128;
   dest_rect.w = frame_width_* 3;
   dest_rect.h = frame_height_ * 3;
 
-  SDL_RenderCopy(renderer_, sprite_, &src_rect, &dest_rect);
+  if (flip_ == SDL_FLIP_NONE)
+  {
+    dest_rect.x = collision_box_.x - camera_x_ -96;
+  }
+  else
+  {
+    dest_rect.x = collision_box_.x - camera_x_ -32;
+  }
+
+  SDL_RenderCopyEx(renderer_, sprite_, &src_rect, &dest_rect, 0, nullptr, flip_);
 }

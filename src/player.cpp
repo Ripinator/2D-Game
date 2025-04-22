@@ -11,11 +11,12 @@ Player::Player(Window &window)
     frame_height_(64),
     current_frame_(0), 
     animation_timer_(0),
-    animation_speed_(16),
+    animation_speed_(10),
     is_attacking_(false)
 {
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();
+  flip_ = SDL_FLIP_NONE;
 
   collision_box_.x = frame_width_;
   collision_box_.y = frame_height_;
@@ -33,8 +34,8 @@ Player::Player(Window &window)
   SDL_FreeSurface(surface);
 
   frame_counts_[PlayerState::Standing] = 8;
-  frame_counts_[PlayerState::WalkRight] = 8;
-  frame_counts_[PlayerState::WalkLeft] = 8;
+  frame_counts_[PlayerState::Walk] = 8;
+  frame_counts_[PlayerState::Walk] = 8;
   frame_counts_[PlayerState::Jumping] = 11;
   frame_counts_[PlayerState::AttackMouseLeft] = 5;
 }
@@ -96,7 +97,6 @@ void Player::update()
 {
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
-  // --- Input ---
   if (is_attacking_)
   {
     animation_state_ = PlayerState::AttackMouseLeft;
@@ -104,14 +104,16 @@ void Player::update()
   }
   else if (keystate[SDL_SCANCODE_D])
   {
+    flip_ = SDL_FLIP_NONE;
     velocity_x_ = 5;
-    animation_state_ = PlayerState::WalkRight;
+    animation_state_ = PlayerState::Walk;
     animate();
   }
   else if (keystate[SDL_SCANCODE_A])
   {
+    flip_ = SDL_FLIP_HORIZONTAL;
     velocity_x_ = -5;
-    animation_state_ = PlayerState::WalkLeft;
+    animation_state_ = PlayerState::Walk;
     animate();
   }
   else if (is_jumping_)
@@ -157,7 +159,6 @@ void Player::update()
 
   world_position_.x = future_position_x.x;
 
-  // --- Vertical Movement ---
   SDL_Rect future_position_y = {
     collision_box_.x,
     collision_box_.y + velocity_y_,
@@ -177,13 +178,11 @@ void Player::update()
       {
         if (velocity_y_ > 0)
         {
-          // landing on top
           future_position_y.y = tile_rect.y - future_position_y.h;
           is_jumping_ = false;
         }
         else if (velocity_y_ < 0)
         {
-          // hitting head
           future_position_y.y = tile_rect.y + tile_rect.h;
         }
 
@@ -215,10 +214,18 @@ void Player::render()
   src_rect.h = frame_height_;
 
   SDL_Rect dest_rect;
-  dest_rect.x = world_position_.x - camera_x_ - 96;
   dest_rect.y = world_position_.y - camera_y_ - 80;
   dest_rect.w = frame_width_* scale;
   dest_rect.h = frame_height_ * scale;
+  if (flip_ == SDL_FLIP_NONE)
+  {
+    dest_rect.x = world_position_.x - camera_x_ - 96;
+  }
+  else if (flip_ == SDL_FLIP_HORIZONTAL)
+  {
+    dest_rect.x = world_position_.x - camera_x_ - 32;
+  }
+  
 
-  SDL_RenderCopy(renderer_, sprite_sheet_, &src_rect, &dest_rect);
+  SDL_RenderCopyEx(renderer_, sprite_sheet_, &src_rect, &dest_rect, 0, nullptr, flip_);
 }
