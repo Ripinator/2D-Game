@@ -3,6 +3,11 @@ Add secret rooms to every level with a hard boss that will be almost impossible 
 The player will have to go back to these rooms at a later point to beat the boss and get some special gear only dropped by this boss.
 
 Idea 2:
+The should not take an hp based approach. The player will only be able to take x amount of hits depending on gear and other factors like maybe special skills
+from a skill tree. As the player progresses further into the game the enemies will be harder to dodge and their movement will be harder to predict.
+The player will also encounter different types of floors that might or might not make damage.
+(Thoughts of Jakob Gruber aka schokooofondue) thank you
+
 Idea 3:
 Idea 4:
 Idea 5:
