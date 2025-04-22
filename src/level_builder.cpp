@@ -2,6 +2,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include "night_borne.hpp"
+#include "mr_professor_wurst.hpp"
 
 using json = nlohmann::json;
 
@@ -96,6 +97,12 @@ LevelData LevelBuilder::loadLevel(int levelId)
     if (type == "NightBorne") 
     {
       auto enemy = std::make_unique<NightBorne>(window_, x, y, floor_rect_);
+      enemy->setEnemyPosition(x, y);
+      levelData.enemies.emplace_back(std::move(enemy));
+    }
+    else if (type == "MrProfessorWurst")
+    {
+      auto enemy = std::make_unique<MrProfessorWurst>(window_, x, y, floor_rect_);
       enemy->setEnemyPosition(x, y);
       levelData.enemies.emplace_back(std::move(enemy));
     }

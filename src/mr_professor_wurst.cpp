@@ -1,22 +1,21 @@
-#include "night_borne.hpp"
+#include "mr_professor_wurst.hpp"
 
-NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
+MrProfessorWurst::MrProfessorWurst(Window &window, int x, int y, const SDL_Rect &floor_rect)
 : Enemy(window, floor_rect)
 {
-  frame_width_ = 64;
-  frame_height_ = 64;
+  frame_width_ = 32;
+  frame_height_ = 32;
   velocity_x_ = 0;
   velocity_y_ = 0;
-  health_ = 200;
-  damage_ = 15;
-  speed_ = 4;
-  sprite_surface_ = IMG_Load("assets/enemies/NightBorne.png");
+  health_ = 0;
+  damage_ = 0;
+  speed_ = 0;
+  sprite_surface_ = IMG_Load("assets/enemies/MrProfessorWurst.png");
   is_attacking_ = false;
   is_falling_ = false;
   animation_speed_ = 10;
   animation_timer_ = 0;
   flip_ = SDL_FLIP_NONE;
-
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
@@ -31,19 +30,15 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   collision_box_.w = 64;
   collision_box_.h = 64;
 
-  frame_counts_[EnemyState::Idle] = 9;
-  frame_counts_[EnemyState::Walking] = 6;
-  frame_counts_[EnemyState::Attack] = 12;
-  frame_counts_[EnemyState::IsHit] = 5;
-  frame_counts_[EnemyState::IsDead] = 23; 
+  frame_counts_[EnemyStateMrProfessorWurst::Idle] = 8;
 }
 
-void NightBorne::setTiles(std::vector<Tile> *tiles)
+void MrProfessorWurst::setTiles(std::vector<Tile> *tiles)
 {
   tiles_ = tiles;
 }
 
-void NightBorne::animate()
+void MrProfessorWurst::animate()
 {
   animation_timer_++;
   if (animation_timer_ >= animation_speed_)
@@ -55,31 +50,31 @@ void NightBorne::animate()
   }
 }
 
-void NightBorne::setEnemyPosition(int position_x, int position_y)
+void MrProfessorWurst::setEnemyPosition(int position_x, int position_y)
 {
   collision_box_.x = position_x;
   collision_box_.y = position_y;
 }
 
-void NightBorne::update(const SDL_Rect &player_box)
+void MrProfessorWurst::update(const SDL_Rect &player_box)
 {
   if (is_attacking_)
   {
-    animation_state_ = EnemyState::Attack;
+    animation_state_ = EnemyStateMrProfessorWurst::Attack;
     animate();
   }
   else
   {
     velocity_x_ = 0;
-    animation_state_ = EnemyState::Idle;
+    animation_state_ = EnemyStateMrProfessorWurst::Idle;
     // Iam doing this to make the animation flip more fluently
     if (player_box.x - collision_box_.x < 48)
     {
-      flip_ = SDL_FLIP_HORIZONTAL;
+      flip_ = SDL_FLIP_NONE;
     }
     else
     {
-      flip_ = SDL_FLIP_NONE;
+      flip_ = SDL_FLIP_HORIZONTAL;
     }
     animate();
   }
@@ -152,28 +147,28 @@ void NightBorne::update(const SDL_Rect &player_box)
   collision_box_.y = future_position_y.y;
 }
 
-void NightBorne::setCameraOffset(int x, int y)
+void MrProfessorWurst::setCameraOffset(int x, int y)
 {
   camera_x_ = x;
   camera_y_ = y;
 }
 
-void NightBorne::render()
+void MrProfessorWurst::render()
 {
   SDL_Rect src_rect;
-  src_rect.x = current_frame_ * (frame_width_ + 16);
+  src_rect.x = current_frame_ * (frame_width_);
   src_rect.y = static_cast<int>(animation_state_) * frame_height_;
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
 
   SDL_Rect dest_rect;
-  dest_rect.y = collision_box_.y - camera_y_ - 128;
+  dest_rect.y = collision_box_.y - camera_y_;
   dest_rect.w = frame_width_* 3;
   dest_rect.h = frame_height_ * 3;
 
   if (flip_ == SDL_FLIP_NONE)
   {
-    dest_rect.x = collision_box_.x - camera_x_ -96;
+    dest_rect.x = collision_box_.x - camera_x_;
   }
   else
   {
