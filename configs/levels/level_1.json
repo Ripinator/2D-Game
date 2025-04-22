@@ -1,5 +1,5 @@
 {
-  "player_spawn": { "x": 1200, "y": 128 },
+  "player_spawn": { "x": 1200, "y": 768 },
   "backgrounds": [
     "assets/level_1/level_1_background/1.png",
     "assets/level_1/level_1_background/2.png",
@@ -10,7 +10,12 @@
     {
       "type": "NightBorne",
       "x": 1280,
-      "y": 128
+      "y": 768
+    },
+    {
+      "type": "NightBorne",
+      "x": 1700,
+      "y": 768
     }
   ],
   "tilemap": [

@@ -95,7 +95,9 @@ LevelData LevelBuilder::loadLevel(int levelId)
 
     if (type == "NightBorne") 
     {
-      levelData.enemies.emplace_back(std::make_unique<NightBorne>(window_, x, y, floor_rect_));
+      auto enemy = std::make_unique<NightBorne>(window_, x, y, floor_rect_);
+      enemy->setEnemyPosition(x, y);
+      levelData.enemies.emplace_back(std::move(enemy));
     }
   }
 

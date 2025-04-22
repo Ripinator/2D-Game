@@ -27,8 +27,10 @@ class Enemy
     : renderer_(window.getRenderer()), floor_rect_(floor_rect) {}
     virtual void update() = 0;
     virtual void render() = 0;
+    virtual SDL_Rect getCollisionBox() = 0;
     virtual void setTiles(std::vector<Tile> *tiles) = 0;
     virtual void setEnemyPosition(int x, int y) = 0;
+    virtual void setCameraOffset(int x, int y) = 0;
     virtual void takeDamage(int amount)
     {
       health_ -= amount;

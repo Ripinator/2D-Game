@@ -40,6 +40,11 @@ class NightBorne : public Enemy
 
     void update() override;
     void render() override;
+    SDL_Rect getCollisionBox() override
+    {
+      return collision_box_;
+    }
+    void setCameraOffset(int x, int y) override;
     void animate();
     void setTiles(std::vector<Tile> *tiles) override;
     void setEnemyPosition(int position_x, int position_y) override;
