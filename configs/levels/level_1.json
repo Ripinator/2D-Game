@@ -16,6 +16,11 @@
       "type": "NightBorne",
       "x": 1700,
       "y": 768
+    },
+    {
+      "type": "MrProfessorWurst",
+      "x": 2500,
+      "y": 730
     }
   ],
   "tilemap": [

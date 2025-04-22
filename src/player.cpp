@@ -5,7 +5,7 @@ Player::Player(Window &window)
     velocity_x_(0),
     velocity_y_(0),
     gravity_(1),
-    jump_strength_(-18),
+    jump_strength_(-14),
     is_jumping_(false),
     frame_width_(64),
     frame_height_(64),
@@ -225,7 +225,6 @@ void Player::render()
   {
     dest_rect.x = world_position_.x - camera_x_ - 32;
   }
-  
 
   SDL_RenderCopyEx(renderer_, sprite_sheet_, &src_rect, &dest_rect, 0, nullptr, flip_);
 }
