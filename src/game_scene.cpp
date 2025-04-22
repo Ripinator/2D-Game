@@ -14,6 +14,8 @@ GameScene::GameScene(Window &window, GameState &game_state)
 
   for (size_t i = 0; i < level_data_.enemies.size(); ++i)
   {
+    SDL_Log("Enemy %zu: set at (%d, %d)", i, level_data_.enemy_spawn_[i].x, level_data_.enemy_spawn_[i].y);
+    SDL_Log("Total enemies: %zu", level_data_.enemies.size());
     if (i < level_data_.enemy_spawn_.size())
     {
       SDL_Point spawn = level_data_.enemy_spawn_[i];
@@ -51,7 +53,14 @@ void GameScene::render()
 
   for (auto &enemy : level_data_.enemies)
   {
+    enemy->setCameraOffset(camera_x, camera_y);
     enemy->render();
+
+    SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
+    SDL_Rect enemy_box = enemy->getCollisionBox();
+    enemy_box.x -= camera_x;
+    enemy_box.y -= camera_y;
+    SDL_RenderDrawRect(renderer_, &enemy_box);
   }
 
   // You can draw the hitbox for debugging with the following

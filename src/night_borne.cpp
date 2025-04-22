@@ -11,17 +11,23 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   damage_ = 15;
   speed_ = 4;
   sprite_surface_ = IMG_Load("assets/enemies/NightBorne.png");
+  is_attacking_ = false;
+  is_falling_ = false;
+  animation_speed_ = 10;
+  animation_timer_ = 0;
+
+
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
 
   enemy_rect_.x = x;
   enemy_rect_.y = y;
-  enemy_rect_.w = 80;
+  enemy_rect_.w = 64;
   enemy_rect_.h = 64;
 
   collision_box_.x = x;
   collision_box_.y = y;
-  collision_box_.w = 80;
+  collision_box_.w = 64;
   collision_box_.h = 64;
 
   frame_counts_[EnemyState::Idle] = 9;
@@ -44,7 +50,6 @@ void NightBorne::animate()
     int max_frames = frame_counts_[animation_state_];
     current_frame_++;
     current_frame_ %= max_frames;
-  
     animation_timer_ = 0;
   }
 }
@@ -134,25 +139,25 @@ void NightBorne::update()
   collision_box_.y = future_position_y.y;
 }
 
+void NightBorne::setCameraOffset(int x, int y)
+{
+  camera_x_ = x;
+  camera_y_ = y;
+}
+
 void NightBorne::render()
 {
   SDL_Rect src_rect;
-  src_rect.x = current_frame_ * (frame_width_);
+  src_rect.x = current_frame_ * (frame_width_ + 16);
   src_rect.y = static_cast<int>(animation_state_) * frame_height_;
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
 
   SDL_Rect dest_rect;
-  dest_rect.x = collision_box_.x - camera_x_;
-  dest_rect.y = collision_box_.y - camera_y_ + 64;
+  dest_rect.x = collision_box_.x - camera_x_ -96;
+  dest_rect.y = collision_box_.y - camera_y_ - 128;
   dest_rect.w = frame_width_* 3;
   dest_rect.h = frame_height_ * 3;
 
   SDL_RenderCopy(renderer_, sprite_, &src_rect, &dest_rect);
-
-  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
-  SDL_Rect debug_hitbox = collision_box_;
-  debug_hitbox.x -= camera_x_;
-  debug_hitbox.y -= camera_y_;
-  SDL_RenderDrawRect(renderer_, &debug_hitbox);
 }
