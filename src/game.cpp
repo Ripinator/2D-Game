@@ -50,7 +50,7 @@ void gameLoop(Window &window)
       }
       else if (state == GameState::Settings)
       {
-        currentScene = std::make_unique<SettingsMenu>(window, headerFont, state);
+        currentScene = std::make_unique<SettingsMenu>(window, headerFont, bodyFont, state);
       }
       else if (state == GameState::Quit)
       {

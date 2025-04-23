@@ -1,8 +1,8 @@
 #include "level_builder.hpp"
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include "night_borne.hpp"
-#include "mr_professor_wurst.hpp"
+#include "enemies/night_borne.hpp"
+#include "enemies/mr_professor_wurst.hpp"
 
 using json = nlohmann::json;
 

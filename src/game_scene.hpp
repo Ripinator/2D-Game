@@ -5,7 +5,7 @@
 // https://free-game-assets.itch.io/ocean-and-clouds-free-pixel-art-backgrounds
 
 #include "player.hpp"
-#include "enemies.hpp"
+#include "enemies/enemies.hpp"
 #include "scene.hpp"
 #include "game.hpp"
 #include "window.hpp"
