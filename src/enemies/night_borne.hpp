@@ -4,7 +4,7 @@
 // This awesome asset is from here: 
 // https://creativekind.itch.io/nightborne-warrior
 
-#include "enemies.hpp"
+#include "enemies/enemies.hpp"
 #include "level_builder.hpp"
 
 enum class EnemyState

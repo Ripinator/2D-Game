@@ -2,7 +2,7 @@
 #define LEVEL_BUILDER_HPP
 
 #include "window.hpp"
-#include "enemies.hpp"
+#include "enemies/enemies.hpp"
 #include "utils/utils.hpp"
 #include <memory>
 #include <SDL2/SDL_ttf.h>
