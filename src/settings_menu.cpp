@@ -8,10 +8,7 @@ SettingsMenu::SettingsMenu(Window &window, TTF_Font *header_font, TTF_Font *font
   int rect_width = 800;
   int rect_height = 500;
   dropdown_open_ = false;
-
-
   selected_display_ = 0;
-  
 
   SDL_Surface *blue_background_surface_ = IMG_Load("assets/starting_menu_background/1.png");
   SDL_Surface *white_clouds_surface_ = IMG_Load("assets/starting_menu_background/2.png");
@@ -45,7 +42,7 @@ SettingsMenu::SettingsMenu(Window &window, TTF_Font *header_font, TTF_Font *font
   number_of_displays_ = SDL_GetNumVideoDisplays();
   int item_height = 30;
   int dropdown_x = menu_rect_.x + 50;
-  int dropdown_y = menu_rect_.y + 130;
+  int dropdown_y = menu_rect_.y + 150;
 
   for (int i = 0; i < number_of_displays_; i++)
   {
@@ -81,8 +78,6 @@ SettingsMenu::SettingsMenu(Window &window, TTF_Font *header_font, TTF_Font *font
 
   text_texture_resolutions_ = createText("Resolution", font_, black, text_resolutions_rect_);
   text_texture_displays_ = createText("Displays", font_, black, text_displays_rect_);
-
-
 }
 
 SDL_Texture* SettingsMenu::createText(const std::string& text, TTF_Font* font, SDL_Color color, SDL_Rect& outRect)
@@ -186,18 +181,7 @@ void SettingsMenu::render()
   SDL_RenderFillRect(renderer_, &menu_rect_);
   SDL_RenderDrawRect(renderer_, &menu_rect_);
 
-  SDL_Rect dropdown_button = {menu_rect_.x + 50, menu_rect_.y + 100, 200, 30};
-  SDL_SetRenderDrawColor(renderer_, 50, 50, 50, 255);
-  SDL_RenderFillRect(renderer_, &dropdown_button);
-
   SDL_Rect display_label_rect;
-  std::string selected_label = "Display " + std::to_string(selected_display_);
-  SDL_Texture* label_texture = createText(selected_label, header_font_, white, display_label_rect);
-  display_label_rect.x = dropdown_button.x + 5;
-  display_label_rect.y = dropdown_button.y + 5;
-  SDL_RenderCopy(renderer_, label_texture, nullptr, &display_label_rect);
-  SDL_DestroyTexture(label_texture);
-
 
   if (dropdown_open_) 
   {
@@ -207,7 +191,7 @@ void SettingsMenu::render()
       SDL_SetRenderDrawColor(renderer_, hovered ? 150 : 100, 100, 100, 255);
       SDL_RenderFillRect(renderer_, &display_options_[i].rect);
 
-      SDL_Texture* opt_texture = createText(display_options_[i].label, header_font_, white, display_label_rect);
+      SDL_Texture* opt_texture = createText(display_options_[i].label, font_, white, display_label_rect);
       display_label_rect.x = display_options_[i].rect.x + 5;
       display_label_rect.y = display_options_[i].rect.y + 5;
       SDL_RenderCopy(renderer_, opt_texture, nullptr, &display_label_rect);
