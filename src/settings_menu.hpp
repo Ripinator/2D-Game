@@ -40,6 +40,7 @@ class SettingsMenu : public Scene
     TTF_Font *font_;
     GameState &game_state_;
     SDL_Event event;
+    Window &window_;
 
     SDL_Texture *text_texture_displays_;
     SDL_Texture *text_texture_resolutions_;
@@ -54,7 +55,7 @@ class SettingsMenu : public Scene
   public:
     SettingsMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state);
     void handleEvent(const SDL_Event &event) override;
-    void update() override;
+    void update(float delta_time) override;
     void drawButton(SDL_Rect &rect, SDL_Texture *texture, SDL_Rect &text_rect, bool hovered, SDL_Event &event);
     SDL_Texture *createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect &outRect);
     void render() override;

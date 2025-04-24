@@ -26,8 +26,8 @@ class Player
     SDL_Point render_size_;
     SDL_Rect collision_box_;
     SDL_RendererFlip flip_;
-    int velocity_x_ = 0;
-    int velocity_y_ = 0;
+    float velocity_x_ = 0.0f;
+    float velocity_y_ = 0.0f;
     int gravity_ = 1;
     int jump_strength_ = -20;
     bool is_jumping_ = false;
@@ -35,7 +35,7 @@ class Player
     bool is_attacking_ = false;
     int camera_x_ = 0;
     int camera_y_ = 0;
-    
+    SDL_FPoint float_position_;
     
     SDL_Texture *sprite_sheet_;
     int frame_width_;
@@ -53,7 +53,7 @@ class Player
 
   public:
     Player(Window &window);
-    void update();
+    void update(float delta_time);
     void render();
     void animate();
     void handleInput(const SDL_Event &event);

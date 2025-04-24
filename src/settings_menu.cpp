@@ -1,7 +1,7 @@
 #include "settings_menu.hpp"
 
 SettingsMenu::SettingsMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state)
-: renderer_(window.getRenderer()), header_font_(header_font), font_(font), game_state_(game_state)
+: renderer_(window.getRenderer()), header_font_(header_font), font_(font), game_state_(game_state), window_(window)
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();
@@ -120,6 +120,14 @@ void SettingsMenu::handleEvent(const SDL_Event &event)
         {
           selected_display_ = i;
           dropdown_open_ = false;
+
+          SDL_SetWindowFullscreen(window_.getWindow(), 0);
+          SDL_Rect display_bounds;
+          if (SDL_GetDisplayBounds(selected_display_, &display_bounds) == 0)
+          {
+            SDL_SetWindowPosition(window_.getWindow(), display_bounds.x, display_bounds.y);
+          }
+          SDL_SetWindowFullscreen(window_.getWindow(), SDL_WINDOW_FULLSCREEN_DESKTOP);
           break;
         }
       }
@@ -131,7 +139,7 @@ void SettingsMenu::handleEvent(const SDL_Event &event)
   }
 }
 
-void SettingsMenu::update()
+void SettingsMenu::update(float delta_time)
 {
   
 }

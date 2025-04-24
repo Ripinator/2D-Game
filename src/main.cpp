@@ -9,13 +9,25 @@ int main(int argc, char *args[])
 {
   SDL_Init(SDL_INIT_VIDEO);
   TTF_Init();
-
   Window window;
-  if (!window.init("Swordlord", 1920, 1080))
+  int w, h;
+
+  SDL_Rect bounds;
+  if (SDL_GetDisplayBounds(0, &bounds) == 0)
+  {
+    w = bounds.w;
+    h = bounds.h;
+  }
+
+  
+  
+  if (!window.init("Swordlord", w, h))
   {
     printf("Failed to initialize SDL.\n");
     return 1;
   }
+
+  SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN_DESKTOP);
 
   gameLoop(window);
 

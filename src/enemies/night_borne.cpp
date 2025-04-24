@@ -13,7 +13,7 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   sprite_surface_ = IMG_Load("assets/enemies/NightBorne.png");
   is_attacking_ = false;
   is_falling_ = false;
-  animation_speed_ = 10;
+  animation_speed_ = 15;
   animation_timer_ = 0;
   flip_ = SDL_FLIP_NONE;
 
@@ -61,7 +61,7 @@ void NightBorne::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void NightBorne::update(const SDL_Rect &player_box)
+void NightBorne::update(const SDL_Rect &player_box, float delta_time)
 {
   if (is_attacking_)
   {

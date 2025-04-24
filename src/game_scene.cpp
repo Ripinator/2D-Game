@@ -57,11 +57,11 @@ void GameScene::render()
     enemy->setCameraOffset(camera_x, camera_y);
     enemy->render();
 
-    SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
-    SDL_Rect enemy_box = enemy->getCollisionBox();
-    enemy_box.x -= camera_x;
-    enemy_box.y -= camera_y;
-    SDL_RenderDrawRect(renderer_, &enemy_box);
+    // SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
+    // SDL_Rect enemy_box = enemy->getCollisionBox();
+    // enemy_box.x -= camera_x;
+    // enemy_box.y -= camera_y;
+    // SDL_RenderDrawRect(renderer_, &enemy_box);
   }
 
   // You can draw the hitbox for debugging with the following
@@ -88,12 +88,12 @@ void GameScene::handleEvent(const SDL_Event& event)
   }
 }
 
-void GameScene::update() 
+void GameScene::update(float delta_time) 
 {
-  player_.update();
+  player_.update(delta_time);
 
   for (auto& enemy : level_data_.enemies)
   {
-    enemy->update(player_.getCollisionBox());
+    enemy->update(player_.getCollisionBox(), delta_time);
   }
 }

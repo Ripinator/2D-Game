@@ -39,7 +39,7 @@ class NightBorne : public Enemy
   public:
     NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect);
 
-    void update(const SDL_Rect &player_box) override;
+    void update(const SDL_Rect &player_box, float delta_time) override;
     void render() override;
     SDL_Rect getCollisionBox() override
     {

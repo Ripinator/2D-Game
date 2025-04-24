@@ -5,13 +5,13 @@ Player::Player(Window &window)
     velocity_x_(0),
     velocity_y_(0),
     gravity_(1),
-    jump_strength_(-14),
+    jump_strength_(-8),
     is_jumping_(false),
     frame_width_(64),
     frame_height_(64),
     current_frame_(0), 
     animation_timer_(0),
-    animation_speed_(10),
+    animation_speed_(20),
     is_attacking_(false)
 {
   screen_height_ = window.getScreenHeight();
@@ -93,7 +93,7 @@ void Player::setPlayerPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void Player::update()
+void Player::update(float delta_time)
 {
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
@@ -105,14 +105,14 @@ void Player::update()
   else if (keystate[SDL_SCANCODE_D])
   {
     flip_ = SDL_FLIP_NONE;
-    velocity_x_ = 5;
+    velocity_x_ = 2;
     animation_state_ = PlayerState::Walk;
     animate();
   }
   else if (keystate[SDL_SCANCODE_A])
   {
     flip_ = SDL_FLIP_HORIZONTAL;
-    velocity_x_ = -5;
+    velocity_x_ = -2;
     animation_state_ = PlayerState::Walk;
     animate();
   }
@@ -128,7 +128,7 @@ void Player::update()
     animate();
   }
 
-  velocity_y_ += gravity_;
+  velocity_y_ += gravity_ * 0.25;
 
   SDL_Rect future_position_x = {
     collision_box_.x + velocity_x_,
