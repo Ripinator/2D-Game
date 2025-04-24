@@ -19,11 +19,15 @@ void gameLoop(Window &window)
 
   bool running = true;
   SDL_Event event;
-  const int frameDelay = 1000 / 60;
+  const float frameDelay = 1.0f / 144.0f;
+  Uint64 last_frame_time = SDL_GetPerformanceCounter();
   
   while (running)
   {
-    Uint32 frameStart = SDL_GetTicks();
+    
+    Uint64 now = SDL_GetPerformanceCounter();
+    float delta_time = static_cast<float>(now - last_frame_time) / SDL_GetPerformanceFrequency();
+    last_frame_time = now;
     
     while (SDL_PollEvent(&event)) 
     {
@@ -34,7 +38,7 @@ void gameLoop(Window &window)
       currentScene->handleEvent(event);
     }
 
-    currentScene->update();
+    currentScene->update(delta_time);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -60,14 +64,17 @@ void gameLoop(Window &window)
       {
         currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
       }
-
       previousState = state;
     }
     
-    Uint32 frameTime = SDL_GetTicks() - frameStart;
-    if (frameTime < frameDelay)
+    Uint64 frame_end_time = SDL_GetPerformanceCounter();
+    float frame_time = static_cast<float>(frame_end_time - now) / SDL_GetPerformanceFrequency();
+    if (frame_time < frameDelay)
     {
-      SDL_Delay(frameDelay - frameTime);
+      Uint64 delay_ms = static_cast<Uint64>((frameDelay - frame_time) * 1000.0f);
+      SDL_Delay(delay_ms);
     }
+
+    last_frame_time = SDL_GetPerformanceCounter();
   }
 }

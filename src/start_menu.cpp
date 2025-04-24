@@ -119,7 +119,7 @@ void StartMenu::handleEvent(const SDL_Event &event)
   }
 }
 
-void StartMenu::update() 
+void StartMenu::update(float delta_time) 
 {
   
 }

@@ -34,7 +34,7 @@ class GameScene : public Scene
   public:
     GameScene(Window &window, GameState &game_state);
     void render() override;
-    void update() override;
+    void update(float delta_time) override;
     void handleEvent(const SDL_Event& event) override;
 };
 

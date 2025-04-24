@@ -25,7 +25,7 @@ class Enemy
   public:
     Enemy(Window &window, const SDL_Rect &floor_rect)
     : renderer_(window.getRenderer()), floor_rect_(floor_rect) {}
-    virtual void update(const SDL_Rect& player_box) = 0;
+    virtual void update(const SDL_Rect& player_box, float delta_time) = 0;
     virtual void render() = 0;
     virtual SDL_Rect getCollisionBox() = 0;
     virtual void setTiles(std::vector<Tile> *tiles) = 0;

@@ -13,7 +13,7 @@ MrProfessorWurst::MrProfessorWurst(Window &window, int x, int y, const SDL_Rect 
   sprite_surface_ = IMG_Load("assets/enemies/MrProfessorWurst.png");
   is_attacking_ = false;
   is_falling_ = false;
-  animation_speed_ = 10;
+  animation_speed_ = 25;
   animation_timer_ = 0;
   flip_ = SDL_FLIP_NONE;
 
@@ -56,7 +56,7 @@ void MrProfessorWurst::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void MrProfessorWurst::update(const SDL_Rect &player_box)
+void MrProfessorWurst::update(const SDL_Rect &player_box, float delta_time)
 {
   if (is_attacking_)
   {
