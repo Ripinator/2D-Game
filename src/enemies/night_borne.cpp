@@ -9,13 +9,14 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   velocity_y_ = 0;
   health_ = 200;
   damage_ = 15;
-  speed_ = 4;
+  speed_ = 1;
   sprite_surface_ = IMG_Load("assets/enemies/NightBorne.png");
   is_attacking_ = false;
   is_falling_ = false;
-  animation_speed_ = 15;
+  animation_speed_ = 20;
   animation_timer_ = 0;
   flip_ = SDL_FLIP_NONE;
+  wait = 0;
 
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
@@ -61,31 +62,34 @@ void NightBorne::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void NightBorne::update(const SDL_Rect &player_box, float delta_time)
+void NightBorne::update(const SDL_FRect &player_box, float delta_time)
 {
-  if (is_attacking_)
+  wait += delta_time;
+  if (wait >= 1)
   {
-    animation_state_ = EnemyState::Attack;
-    animate();
+    wait = 0;
+  }
+
+  const int detection_range = 200;
+  int distance_to_player = player_box.x - collision_box_.x;
+
+  if (std::abs(distance_to_player < detection_range))
+  {
+    animation_state_ = EnemyState::Idle;
+    velocity_x_ = 0;
+
+    // This is nice but might not be so good for a smooth transition I dont know why i kept this at this point
+    flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
   }
   else
   {
-    velocity_x_ = 0;
-    animation_state_ = EnemyState::Idle;
-    // Iam doing this to make the animation flip more fluently
-    if (player_box.x - collision_box_.x < 48)
-    {
-      flip_ = SDL_FLIP_HORIZONTAL;
-    }
-    else
-    {
-      flip_ = SDL_FLIP_NONE;
-    }
-    animate();
+    animation_state_ = EnemyState::Walking;
+    velocity_x_ -= 200;
   }
 
+  animate();
   //  Horizontal movement
-  SDL_Rect future_position_x = {
+  SDL_FRect future_position_x = {
     collision_box_.x + velocity_x_,
     collision_box_.y,
     collision_box_.w,
@@ -98,9 +102,9 @@ void NightBorne::update(const SDL_Rect &player_box, float delta_time)
     {
       if (!tile.solid) continue;
 
-      SDL_Rect tile_rect = tile.destRect;
+      SDL_FRect tile_rect = tile.destRect;
 
-      if (SDL_HasIntersection(&future_position_x, &tile_rect))
+      if (SDL_HasIntersectionF(&future_position_x, &tile_rect))
       {
         if (velocity_x_ > 0)
         {
@@ -116,7 +120,7 @@ void NightBorne::update(const SDL_Rect &player_box, float delta_time)
   }
 
   // --- Vertical Movement ---
-  SDL_Rect future_position_y = {
+  SDL_FRect future_position_y = {
     collision_box_.x,
     collision_box_.y + velocity_y_,
     collision_box_.w,
@@ -129,9 +133,9 @@ void NightBorne::update(const SDL_Rect &player_box, float delta_time)
     {
       if (!tile.solid) continue;
 
-      SDL_Rect tile_rect = tile.destRect;
+      SDL_FRect tile_rect = tile.destRect;
 
-      if (SDL_HasIntersection(&future_position_y, &tile_rect))
+      if (SDL_HasIntersectionF(&future_position_y, &tile_rect))
       {
         if (velocity_y_ > 0)
         {
@@ -162,14 +166,41 @@ void NightBorne::render()
 {
   SDL_Rect src_rect;
   src_rect.x = current_frame_ * (frame_width_ + 16);
-  src_rect.y = static_cast<int>(animation_state_) * frame_height_;
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
 
-  SDL_Rect dest_rect;
-  dest_rect.y = collision_box_.y - camera_y_ - 128;
+  SDL_FRect dest_rect;
   dest_rect.w = frame_width_* 3;
   dest_rect.h = frame_height_ * 3;
+
+  // there are some seemingly random hardcoded values in here because the spritesheet is weird and iam to lazy to change
+  // also maybe a switch statement is not the optimale solution but i dont care just wanted to state this so i can cringe at this 
+  // in a few years
+  switch (animation_state_)
+  {
+    case EnemyState::Idle:
+      src_rect.y = static_cast<int>(animation_state_) * frame_height_;
+      dest_rect.y = collision_box_.y - camera_y_ - 128;
+      break;
+    case EnemyState::Walking:
+      src_rect.y = static_cast<int>(animation_state_) * frame_height_ + 32;
+      dest_rect.y = collision_box_.y - camera_y_ - 80;
+      break;
+    case EnemyState::Attack:
+      src_rect.y = static_cast<int>(animation_state_) * frame_height_ + 32;
+      dest_rect.y = collision_box_.y - camera_y_ - 128;
+      break;
+    case EnemyState::IsHit:
+      src_rect.y = static_cast<int>(animation_state_) * frame_height_ + 64;
+      dest_rect.y = collision_box_.y - camera_y_ - 80;
+      break;
+    case EnemyState::IsDead:
+      src_rect.y = static_cast<int>(animation_state_) * frame_height_ + 64;
+      dest_rect.y = collision_box_.y - camera_y_ - 128;
+      break;
+    default:
+      break;
+  }
 
   if (flip_ == SDL_FLIP_NONE)
   {
@@ -179,6 +210,5 @@ void NightBorne::render()
   {
     dest_rect.x = collision_box_.x - camera_x_ -32;
   }
-
-  SDL_RenderCopyEx(renderer_, sprite_, &src_rect, &dest_rect, 0, nullptr, flip_);
+  SDL_RenderCopyExF(renderer_, sprite_, &src_rect, &dest_rect, 0, nullptr, flip_);
 }
