@@ -32,10 +32,10 @@ void GameScene::render()
 {
   SDL_ShowCursor(SDL_DISABLE);
 
-  SDL_Point player_position = player_.getPlayerPosition();
+  SDL_FPoint player_position = player_.getPlayerPosition();
   
-  int camera_x = player_position.x - (screen_width_ / 2 - 64 * 3 / 2);
-  int camera_y = player_position.y - (screen_height_ * 3 / 4 - 64 * 3 / 2);
+  float camera_x = player_position.x - (screen_width_ / 2.0f - 64.0f * 3.0f / 2.0f);
+  float camera_y = player_position.y - (screen_height_ * 3.0f / 4.0f - 64.0f * 3.0f / 2.0f);
 
   player_.setCameraOffset(camera_x, camera_y);
 
@@ -44,12 +44,15 @@ void GameScene::render()
     renderScaleTexture(renderer_, background, screen_width_, screen_height_);
   }
 
+  float rounded_camera_x = std::round(camera_x);
+  float rounded_camera_y = std::round(camera_y);
+
   for (auto &tile : level_data_.tiles)
   {
-    SDL_Rect world_rect = tile.destRect;
-    world_rect.x -= camera_x;
-    world_rect.y -= camera_y;
-    SDL_RenderCopy(renderer_, tile.texture, nullptr, &world_rect);
+    SDL_FRect world_rect = tile.destRect;
+    world_rect.x -= rounded_camera_x;
+    world_rect.y -= rounded_camera_y;
+    SDL_RenderCopyF(renderer_, tile.texture, nullptr, &world_rect);
   }
 
   for (auto &enemy : level_data_.enemies)
@@ -58,19 +61,19 @@ void GameScene::render()
     enemy->render();
 
     // SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
-    // SDL_Rect enemy_box = enemy->getCollisionBox();
+    // SDL_FRect enemy_box = enemy->getCollisionBox();
     // enemy_box.x -= camera_x;
     // enemy_box.y -= camera_y;
-    // SDL_RenderDrawRect(renderer_, &enemy_box);
+    // SDL_RenderDrawRectF(renderer_, &enemy_box);
   }
 
   // You can draw the hitbox for debugging with the following
 
   // SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
-  // SDL_Rect player_box = player_.getCollisionBox();
+  // SDL_FRect player_box = player_.getCollisionBox();
   // player_box.x -= player_.getCameraOffsetX();
   // player_box.y -= player_.getCameraOffsetY();
-  // SDL_RenderDrawRect(renderer_, &player_box);
+  // SDL_RenderDrawRectF(renderer_, &player_box);
 
   player_.render();  
   

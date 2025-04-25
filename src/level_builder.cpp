@@ -57,7 +57,7 @@ LevelData LevelBuilder::loadLevel(int levelId)
   }
 
 
-  const int TILE_SIZE = 32;
+  const float TILE_SIZE = 32.0f;
 
   int y = 0;
   for (const auto& row : data["tilemap"]) 
