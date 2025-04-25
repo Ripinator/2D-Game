@@ -19,7 +19,7 @@ enum class EnemyStateMrProfessorWurst
 class MrProfessorWurst : public Enemy
 {
   private:
-    SDL_Rect collision_box_;
+    SDL_FRect collision_box_;
     SDL_RendererFlip flip_;
     std::unordered_map<EnemyStateMrProfessorWurst, int> frame_counts_;
     std::vector<Tile> *tiles_;
@@ -39,9 +39,9 @@ class MrProfessorWurst : public Enemy
   public:
     MrProfessorWurst(Window &window, int x, int y, const SDL_Rect &floor_rect);
 
-    void update(const SDL_Rect &player_box, float delta_time) override;
+    void update(const SDL_FRect &player_box, float delta_time) override;
     void render() override;
-    SDL_Rect getCollisionBox() override
+    SDL_FRect getCollisionBox() override
     {
       return collision_box_;
     }

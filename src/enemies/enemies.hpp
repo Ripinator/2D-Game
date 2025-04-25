@@ -16,7 +16,7 @@ class Enemy
     SDL_Renderer *renderer_;
     SDL_Texture *sprite_;
     SDL_Surface *sprite_surface_;
-    SDL_Rect enemy_rect_;
+    SDL_FRect enemy_rect_;
     SDL_Rect floor_rect_;
     int health_;
     int damage_;
@@ -25,9 +25,9 @@ class Enemy
   public:
     Enemy(Window &window, const SDL_Rect &floor_rect)
     : renderer_(window.getRenderer()), floor_rect_(floor_rect) {}
-    virtual void update(const SDL_Rect& player_box, float delta_time) = 0;
+    virtual void update(const SDL_FRect& player_box, float delta_time) = 0;
     virtual void render() = 0;
-    virtual SDL_Rect getCollisionBox() = 0;
+    virtual SDL_FRect getCollisionBox() = 0;
     virtual void setTiles(std::vector<Tile> *tiles) = 0;
     virtual void setEnemyPosition(int x, int y) = 0;
     virtual void setCameraOffset(int x, int y) = 0;
@@ -35,7 +35,7 @@ class Enemy
     {
       health_ -= amount;
     }
-    SDL_Rect getRect() const {return enemy_rect_;}
+    SDL_FRect getRect() const {return enemy_rect_;}
     bool isAlive() const {return health_ > 0;}
 };
 

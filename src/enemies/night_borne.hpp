@@ -19,14 +19,14 @@ enum class EnemyState
 class NightBorne : public Enemy
 {
   private:
-    SDL_Rect collision_box_;
+    SDL_FRect collision_box_;
     SDL_RendererFlip flip_;
     std::unordered_map<EnemyState, int> frame_counts_;
     std::vector<Tile> *tiles_;
     int frame_width_;
     int frame_height_;
-    int velocity_x_;
-    int velocity_y_;
+    float velocity_x_;
+    float velocity_y_;
     int current_frame_;
     int animation_timer_;
     int animation_speed_;
@@ -34,14 +34,15 @@ class NightBorne : public Enemy
     bool is_falling_ = false;
     int camera_x_ = 0;
     int camera_y_ = 0;
+    float wait;
     EnemyState animation_state_ = EnemyState::Idle;
 
   public:
     NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect);
 
-    void update(const SDL_Rect &player_box, float delta_time) override;
+    void update(const SDL_FRect &player_box, float delta_time) override;
     void render() override;
-    SDL_Rect getCollisionBox() override
+    SDL_FRect getCollisionBox() override
     {
       return collision_box_;
     }

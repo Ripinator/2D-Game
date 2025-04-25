@@ -5,7 +5,7 @@
 
 struct Tile {
   SDL_Texture *texture;
-  SDL_Rect destRect;
+  SDL_FRect destRect;
   bool solid;
 };
 

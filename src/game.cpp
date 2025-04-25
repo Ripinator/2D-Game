@@ -19,7 +19,7 @@ void gameLoop(Window &window)
 
   bool running = true;
   SDL_Event event;
-  const float frameDelay = 1.0f / 144.0f;
+  const float frameDelay = 1.0f / 250.0f;
   Uint64 last_frame_time = SDL_GetPerformanceCounter();
   
   while (running)
@@ -74,7 +74,5 @@ void gameLoop(Window &window)
       Uint64 delay_ms = static_cast<Uint64>((frameDelay - frame_time) * 1000.0f);
       SDL_Delay(delay_ms);
     }
-
-    last_frame_time = SDL_GetPerformanceCounter();
   }
 }

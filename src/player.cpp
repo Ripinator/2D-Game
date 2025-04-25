@@ -1,27 +1,32 @@
 #include "player.hpp"
+#include <string>
+#include <iostream>
 
 Player::Player(Window &window) 
   : renderer_(window.getRenderer()),
     velocity_x_(0),
     velocity_y_(0),
-    gravity_(1),
-    jump_strength_(-8),
+    gravity_(750.0f),
+    jump_strength_(-550),
     is_jumping_(false),
     frame_width_(64),
     frame_height_(64),
     current_frame_(0), 
-    animation_timer_(0),
-    animation_speed_(20),
+    animation_timer_(0.0f),
+    animation_speed_(100),
     is_attacking_(false)
 {
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();
   flip_ = SDL_FLIP_NONE;
+  attack_animation_done_ = true;
 
-  collision_box_.x = frame_width_;
-  collision_box_.y = frame_height_;
+  collision_box_.x = 64.0f;
+  collision_box_.y = 64.0f;
 
-  world_position_.x = 0;
+  move_x_ = 0.0f;
+
+  world_position_.x = 0.0f;
   world_position_.y = screen_height_ - frame_height_ - (screen_height_ / 6);
 
   collision_box_.w = frame_width_;
@@ -52,7 +57,14 @@ void Player::handleInput(const SDL_Event &event)
   }
   else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
   {
-    is_attacking_ = true;
+    if (attack_animation_done_)
+    {
+      is_attacking_ = true;
+      attack_animation_done_ = false;
+      animation_state_ = PlayerState::AttackMouseLeft;
+      current_frame_ = 0;
+      animation_timer_ = 0.0f;
+    }
   }
 }
 
@@ -61,9 +73,9 @@ void Player::setTiles(const std::vector<Tile> *tiles)
   tiles_ = tiles;
 }
 
-void Player::animate()
+void Player::animate(float delta_time)
 {
-  animation_timer_++;
+  animation_timer_ += delta_time * 1000.0f;
   if (animation_timer_ >= animation_speed_)
   {
     int max_frames = frame_counts_[animation_state_];
@@ -72,6 +84,7 @@ void Player::animate()
     if (animation_state_ == PlayerState::AttackMouseLeft && current_frame_ >= max_frames)
     {
       is_attacking_ = false;
+      attack_animation_done_ = true;
       current_frame_ = 0;
       animation_state_ = PlayerState::Standing;
     }
@@ -80,11 +93,11 @@ void Player::animate()
       current_frame_ %= max_frames;
     }
 
-    animation_timer_ = 0;
+    animation_timer_ = 0.0f;
   }
 }
 
-void Player::setPlayerPosition(int position_x, int position_y)
+void Player::setPlayerPosition(float position_x, float position_y)
 {
   world_position_.x = position_x;
   world_position_.y = position_y;
@@ -100,38 +113,56 @@ void Player::update(float delta_time)
   if (is_attacking_)
   {
     animation_state_ = PlayerState::AttackMouseLeft;
-    animate();
+    animate(delta_time);
   }
   else if (keystate[SDL_SCANCODE_D])
   {
     flip_ = SDL_FLIP_NONE;
-    velocity_x_ = 2;
+    velocity_x_ = player_speed;
+    move_x_ = velocity_x_ * delta_time;
     animation_state_ = PlayerState::Walk;
-    animate();
+    animate(delta_time);
   }
   else if (keystate[SDL_SCANCODE_A])
   {
     flip_ = SDL_FLIP_HORIZONTAL;
-    velocity_x_ = -2;
+    velocity_x_ = -player_speed;
+    move_x_ = velocity_x_ * delta_time;
     animation_state_ = PlayerState::Walk;
-    animate();
+    animate(delta_time);
   }
   else if (is_jumping_)
   {
     animation_state_ = PlayerState::Jumping;
-    animate();
+    animate(delta_time);
   }
   else
   {
     velocity_x_ = 0;
+    move_x_ = 0;
     animation_state_ = PlayerState::Standing;
-    animate();
+    animate(delta_time);
   }
 
-  velocity_y_ += gravity_ * 0.25;
+  bool space_held = keystate[SDL_SCANCODE_SPACE];
 
-  SDL_Rect future_position_x = {
-    collision_box_.x + velocity_x_,
+  if (velocity_y_ > 0) 
+  {
+    velocity_y_ += gravity_ * fall_multiplier_ * delta_time;
+  }
+  else if (velocity_y_ < 0 && !space_held) 
+  {
+    velocity_y_ += gravity_ * low_jump_multiplier_ * delta_time;
+  }
+  else 
+  {
+    velocity_y_ += gravity_ * delta_time;
+  }
+
+  float move_y = velocity_y_ * delta_time;
+
+  SDL_FRect future_position_x = {
+    collision_box_.x + move_x_,
     collision_box_.y,
     collision_box_.w,
     collision_box_.h
@@ -143,25 +174,24 @@ void Player::update(float delta_time)
     {
       if (!tile.solid) continue;
 
-      SDL_Rect tile_rect = tile.destRect;
+      SDL_FRect tile_rect = tile.destRect;
 
-      if (SDL_HasIntersection(&future_position_x, &tile_rect))
+      if (SDL_HasIntersectionF(&future_position_x, &tile_rect))
       {
-        if (velocity_x_ > 0)
+        if (move_x_ >= 0)
           future_position_x.x = tile_rect.x - future_position_x.w;
-        else if (velocity_x_ < 0)
+        else if (move_x_ < 0)
           future_position_x.x = tile_rect.x + tile_rect.w;
 
         velocity_x_ = 0;
+        move_x_ = 0;
       }
     }
   }
-
-  world_position_.x = future_position_x.x;
-
-  SDL_Rect future_position_y = {
+  
+  SDL_FRect future_position_y = {
     collision_box_.x,
-    collision_box_.y + velocity_y_,
+    collision_box_.y + move_y,
     collision_box_.w,
     collision_box_.h
   };
@@ -172,21 +202,22 @@ void Player::update(float delta_time)
     {
       if (!tile.solid) continue;
 
-      SDL_Rect tile_rect = tile.destRect;
+      SDL_FRect tile_rect = tile.destRect;
 
-      if (SDL_HasIntersection(&future_position_y, &tile_rect))
+      if (SDL_HasIntersectionF(&future_position_y, &tile_rect))
       {
-        if (velocity_y_ > 0)
+        if (move_y >= 0)
         {
           future_position_y.y = tile_rect.y - future_position_y.h;
           is_jumping_ = false;
         }
-        else if (velocity_y_ < 0)
+        else if (move_y < 0)
         {
           future_position_y.y = tile_rect.y + tile_rect.h;
         }
 
         velocity_y_ = 0;
+        move_y = 0;
       }
     }
   }
@@ -196,9 +227,16 @@ void Player::update(float delta_time)
 
   world_position_.x = collision_box_.x;
   world_position_.y = collision_box_.y;
+
+  const float cam_smooth = 0.1f;
+
+  camera_x_ += (world_position_.x - camera_x_ - screen_width_ / 2.0f) * cam_smooth;
+  camera_y_ += (world_position_.y - camera_y_ - screen_height_ / 2.0f) * cam_smooth;
+
+  std::cout << "Move X: " << move_x_ << " | Pos X: " << world_position_.x << std::endl;
 }
 
-SDL_Rect Player::getCollisionBox() const 
+SDL_FRect Player::getCollisionBox() const 
 {
   return collision_box_;
 }
@@ -212,19 +250,22 @@ void Player::render()
   src_rect.y = static_cast<int>(animation_state_) * frame_height_;
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
+  
+  float rounded_camera_x = std::round(camera_x_);
+  float rounded_camera_y = std::round(camera_y_);
 
-  SDL_Rect dest_rect;
-  dest_rect.y = world_position_.y - camera_y_ - 80;
+  SDL_FRect dest_rect;
+  dest_rect.y = world_position_.y - rounded_camera_y - 80.0f;
   dest_rect.w = frame_width_* scale;
   dest_rect.h = frame_height_ * scale;
   if (flip_ == SDL_FLIP_NONE)
   {
-    dest_rect.x = world_position_.x - camera_x_ - 96;
+    dest_rect.x = world_position_.x - rounded_camera_x - 96.0f;
   }
   else if (flip_ == SDL_FLIP_HORIZONTAL)
   {
-    dest_rect.x = world_position_.x - camera_x_ - 32;
+    dest_rect.x = world_position_.x - rounded_camera_x - 32.0f;
   }
 
-  SDL_RenderCopyEx(renderer_, sprite_sheet_, &src_rect, &dest_rect, 0, nullptr, flip_);
+  SDL_RenderCopyExF(renderer_, sprite_sheet_, &src_rect, &dest_rect, 0, nullptr, flip_);
 }

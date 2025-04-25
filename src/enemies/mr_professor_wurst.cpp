@@ -56,7 +56,7 @@ void MrProfessorWurst::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void MrProfessorWurst::update(const SDL_Rect &player_box, float delta_time)
+void MrProfessorWurst::update(const SDL_FRect &player_box, float delta_time)
 {
   if (is_attacking_)
   {
@@ -80,7 +80,7 @@ void MrProfessorWurst::update(const SDL_Rect &player_box, float delta_time)
   }
 
   //  Horizontal movement
-  SDL_Rect future_position_x = {
+  SDL_FRect future_position_x = {
     collision_box_.x + velocity_x_,
     collision_box_.y,
     collision_box_.w,
@@ -93,9 +93,9 @@ void MrProfessorWurst::update(const SDL_Rect &player_box, float delta_time)
     {
       if (!tile.solid) continue;
 
-      SDL_Rect tile_rect = tile.destRect;
+      SDL_FRect tile_rect = tile.destRect;
 
-      if (SDL_HasIntersection(&future_position_x, &tile_rect))
+      if (SDL_HasIntersectionF(&future_position_x, &tile_rect))
       {
         if (velocity_x_ > 0)
         {
@@ -111,7 +111,7 @@ void MrProfessorWurst::update(const SDL_Rect &player_box, float delta_time)
   }
 
   // --- Vertical Movement ---
-  SDL_Rect future_position_y = {
+  SDL_FRect future_position_y = {
     collision_box_.x,
     collision_box_.y + velocity_y_,
     collision_box_.w,
@@ -124,9 +124,9 @@ void MrProfessorWurst::update(const SDL_Rect &player_box, float delta_time)
     {
       if (!tile.solid) continue;
 
-      SDL_Rect tile_rect = tile.destRect;
+      SDL_FRect tile_rect = tile.destRect;
 
-      if (SDL_HasIntersection(&future_position_y, &tile_rect))
+      if (SDL_HasIntersectionF(&future_position_y, &tile_rect))
       {
         if (velocity_y_ > 0)
         {
@@ -161,7 +161,7 @@ void MrProfessorWurst::render()
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
 
-  SDL_Rect dest_rect;
+  SDL_FRect dest_rect;
   dest_rect.y = collision_box_.y - camera_y_;
   dest_rect.w = frame_width_* 3;
   dest_rect.h = frame_height_ * 3;
@@ -175,5 +175,5 @@ void MrProfessorWurst::render()
     dest_rect.x = collision_box_.x - camera_x_ -32;
   }
 
-  SDL_RenderCopyEx(renderer_, sprite_, &src_rect, &dest_rect, 0, nullptr, flip_);
+  SDL_RenderCopyExF(renderer_, sprite_, &src_rect, &dest_rect, 0, nullptr, flip_);
 }
