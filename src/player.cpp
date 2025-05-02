@@ -233,7 +233,7 @@ void Player::update(float delta_time)
   camera_x_ += (world_position_.x - camera_x_ - screen_width_ / 2.0f) * cam_smooth;
   camera_y_ += (world_position_.y - camera_y_ - screen_height_ / 2.0f) * cam_smooth;
 
-  std::cout << "Move X: " << move_x_ << " | Pos X: " << world_position_.x << std::endl;
+  //std::cout << "Move X: " << move_x_ << " | Pos X: " << world_position_.x << std::endl;
 }
 
 SDL_FRect Player::getCollisionBox() const 
