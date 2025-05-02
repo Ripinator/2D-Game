@@ -21,6 +21,11 @@
       "type": "MrProfessorWurst",
       "x": 2500,
       "y": 730
+    },
+    {
+      "type": "Orc",
+      "x": 2700,
+      "y": 768
     }
   ],
   "tilemap": [
