@@ -34,7 +34,10 @@ class NightBorne : public Enemy
     bool is_falling_ = false;
     int camera_x_ = 0;
     int camera_y_ = 0;
+    float move_x_;
+    float move_y_;
     float wait;
+    const float enemy_speed_ = 150.0f;
     EnemyState animation_state_ = EnemyState::Idle;
 
   public:
@@ -47,7 +50,7 @@ class NightBorne : public Enemy
       return collision_box_;
     }
     void setCameraOffset(int x, int y) override;
-    void animate();
+    void animate(float delta_time);
     void setTiles(std::vector<Tile> *tiles) override;
     void setEnemyPosition(int position_x, int position_y) override;
 };

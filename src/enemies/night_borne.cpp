@@ -17,6 +17,8 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   animation_timer_ = 0;
   flip_ = SDL_FLIP_NONE;
   wait = 0;
+  move_x_ = 0.0f;
+  move_y_ = 0.0f;
 
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
@@ -44,7 +46,7 @@ void NightBorne::setTiles(std::vector<Tile> *tiles)
   tiles_ = tiles;
 }
 
-void NightBorne::animate()
+void NightBorne::animate(float delta_time)
 {
   animation_timer_++;
   if (animation_timer_ >= animation_speed_)
@@ -64,33 +66,27 @@ void NightBorne::setEnemyPosition(int position_x, int position_y)
 
 void NightBorne::update(const SDL_FRect &player_box, float delta_time)
 {
-  wait += delta_time;
-  if (wait >= 1)
-  {
-    wait = 0;
-  }
-
   const int detection_range = 200;
   int distance_to_player = player_box.x - collision_box_.x;
 
-  if (std::abs(distance_to_player < detection_range))
+  if (std::abs(distance_to_player) < detection_range)
   {
     animation_state_ = EnemyState::Idle;
     velocity_x_ = 0;
 
-    // This is nice but might not be so good for a smooth transition I dont know why i kept this at this point
     flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
   }
   else
   {
     animation_state_ = EnemyState::Walking;
-    velocity_x_ -= 200;
+    velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
+    move_x_ = velocity_x_ * delta_time;
   }
 
-  animate();
-  //  Horizontal movement
+  animate(delta_time);
+
   SDL_FRect future_position_x = {
-    collision_box_.x + velocity_x_,
+    collision_box_.x + move_x_,
     collision_box_.y,
     collision_box_.w,
     collision_box_.h
@@ -115,11 +111,13 @@ void NightBorne::update(const SDL_FRect &player_box, float delta_time)
           future_position_x.x = tile_rect.x + tile_rect.w;
         }
         velocity_x_ = 0;
+        move_x_ = 0;
       }
     }
   }
 
-  // --- Vertical Movement ---
+  collision_box_.x += move_x_;
+
   SDL_FRect future_position_y = {
     collision_box_.x,
     collision_box_.y + velocity_y_,
@@ -147,12 +145,11 @@ void NightBorne::update(const SDL_FRect &player_box, float delta_time)
           future_position_y.y = tile_rect.y + tile_rect.h;
         }
         velocity_y_ = 0;
+        move_y_ = 0;
       }
     }
   }
 
-
-  collision_box_.x = future_position_x.x;
   collision_box_.y = future_position_y.y;
 }
 
@@ -173,9 +170,8 @@ void NightBorne::render()
   dest_rect.w = frame_width_* 3;
   dest_rect.h = frame_height_ * 3;
 
-  // there are some seemingly random hardcoded values in here because the spritesheet is weird and iam to lazy to change
-  // also maybe a switch statement is not the optimale solution but i dont care just wanted to state this so i can cringe at this 
-  // in a few years
+  // there are some seemingly random hardcoded values in here because the spritesheet is weird and iam to lazy to change the sheet itself
+  // also maybe a switch statement is not the optimale solution but i dont care
   switch (animation_state_)
   {
     case EnemyState::Idle:
