@@ -34,6 +34,11 @@ Player::Player(Window &window)
   collision_box_.x = world_position_.x;
   collision_box_.y = world_position_.y;
 
+  attacking_collision_box.w = (frame_width_ / 3) * 2;
+  attacking_collision_box.h = (frame_height_ / 3) * 2;  
+  attacking_collision_box.x = world_position_.x + attack_collisionbox_offset;
+  attacking_collision_box.y = world_position_.y;
+
   SDL_Surface *surface = IMG_Load("assets/WarriorMan-Sheet.png");
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
   SDL_FreeSurface(surface);
@@ -113,6 +118,8 @@ void Player::update(float delta_time)
   if (is_attacking_)
   {
     animation_state_ = PlayerState::AttackMouseLeft;
+    velocity_x_ = 0;
+    move_x_ = 0;
     animate(delta_time);
   }
   else if (keystate[SDL_SCANCODE_D])
@@ -228,6 +235,16 @@ void Player::update(float delta_time)
   world_position_.x = collision_box_.x;
   world_position_.y = collision_box_.y;
 
+  float attack_offset = 0.0f;
+  //The values are based on looking at how far the player swings his sword
+  if (is_attacking_)
+  {
+    attack_offset = (flip_ == SDL_FLIP_NONE) ? 60.0f : -38.0f;
+  }
+
+  attacking_collision_box.x = world_position_.x + attack_offset;
+  attacking_collision_box.y = world_position_.y;
+
   const float cam_smooth = 0.1f;
 
   camera_x_ += (world_position_.x - camera_x_ - screen_width_ / 2.0f) * cam_smooth;
@@ -239,6 +256,11 @@ void Player::update(float delta_time)
 SDL_FRect Player::getCollisionBox() const 
 {
   return collision_box_;
+}
+
+SDL_FRect Player::getAttackCollisionBox() const
+{
+  return attacking_collision_box; 
 }
 
 void Player::render()

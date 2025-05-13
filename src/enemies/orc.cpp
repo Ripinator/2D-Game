@@ -17,7 +17,9 @@ Orc::Orc(Window &window, int x, int y, const SDL_Rect &floor_rect)
   animation_timer_ = 0;
   flip_ = SDL_FLIP_NONE;
   wait = 0;
-
+  move_x_ = 0.0f;
+  move_y_ = 0.0f;
+  health_ = 3;
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
@@ -32,6 +34,16 @@ Orc::Orc(Window &window, int x, int y, const SDL_Rect &floor_rect)
   collision_box_.w = 64;
   collision_box_.h = 64;
 
+  health_bar_.x = x;
+  health_bar_.y = y;
+  health_bar_.w = 54;
+  health_bar_.h = 8;
+
+  health_bar_border_.x = x;
+  health_bar_border_.y = y;
+  health_bar_border_.w = 56;
+  health_bar_border_.h = 10;
+
   frame_counts_[OrcEnemyState::Idle] = 6;
   frame_counts_[OrcEnemyState::Walking] = 8;
   frame_counts_[OrcEnemyState::BasicAttack] = 6;
@@ -40,12 +52,17 @@ Orc::Orc(Window &window, int x, int y, const SDL_Rect &floor_rect)
   frame_counts_[OrcEnemyState::isDead] = 4;
 }
 
+Orc::~Orc()
+{
+  
+}
+
 void Orc::setTiles(std::vector<Tile> *tiles)
 {
   tiles_ = tiles;
 }
 
-void Orc::animate()
+void Orc::animate(float delta_time)
 {
   animation_timer_++;
   if (animation_timer_ >= animation_speed_)
@@ -63,35 +80,30 @@ void Orc::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void Orc::update(const SDL_FRect &player_box, float delta_time)
+void Orc::update(const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attack_hitboxes, float delta_time)
 {
-   wait += delta_time;
-  if (wait >= 1)
-  {
-    wait = 0;
-  }
-
   const int detection_range = 200;
   int distance_to_player = player_box.x - collision_box_.x;
 
-  if (std::abs(distance_to_player < detection_range))
+  if (std::abs(distance_to_player) < detection_range)
   {
     animation_state_ = OrcEnemyState::Idle;
     velocity_x_ = 0;
 
-    // This is nice but might not be so good for a smooth transition I dont know why i kept this at this point
     flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
   }
   else
   {
     animation_state_ = OrcEnemyState::Walking;
-    velocity_x_ -= 200;
+    velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
+    move_x_ = velocity_x_ * delta_time;
   }
 
-  animate();
+  animate(delta_time);
+
   //  Horizontal movement
   SDL_FRect future_position_x = {
-    collision_box_.x + velocity_x_,
+    collision_box_.x + move_x_,
     collision_box_.y,
     collision_box_.w,
     collision_box_.h
@@ -116,9 +128,12 @@ void Orc::update(const SDL_FRect &player_box, float delta_time)
           future_position_x.x = tile_rect.x + tile_rect.w;
         }
         velocity_x_ = 0;
+        move_x_ = 0;
       }
     }
   }
+
+  collision_box_.x += move_x_;
 
   // --- Vertical Movement ---
   SDL_FRect future_position_y = {
@@ -128,6 +143,7 @@ void Orc::update(const SDL_FRect &player_box, float delta_time)
     collision_box_.h
   };
 
+  // iterating through every tile and checking if the object intersects with it 
   if (tiles_)
   {
     for (const Tile &tile : *tiles_)
@@ -148,13 +164,17 @@ void Orc::update(const SDL_FRect &player_box, float delta_time)
           future_position_y.y = tile_rect.y + tile_rect.h;
         }
         velocity_y_ = 0;
+        move_y_ = 0;
       }
     }
   }
 
-
-  collision_box_.x = future_position_x.x;
   collision_box_.y = future_position_y.y;
+
+  health_bar_.x = collision_box_.x;
+  health_bar_.y = collision_box_.y - 5;
+  health_bar_border_.x = health_bar_.x - 1;
+  health_bar_border_.y = health_bar_.y - 1;
 }
 
 void Orc::setCameraOffset(int x, int y)
@@ -166,7 +186,8 @@ void Orc::setCameraOffset(int x, int y)
 void Orc::render()
 {
   SDL_Rect src_rect;
-  src_rect.x = current_frame_ * (frame_width_ + 16);
+  // iam going to be honest with you i have now idea why its +36
+  src_rect.x = current_frame_ * (frame_width_ + 36);
   src_rect.w = frame_width_;
   src_rect.h = frame_height_;
 
@@ -185,7 +206,7 @@ void Orc::render()
       break;
     case OrcEnemyState::Walking:
       src_rect.y = static_cast<int>(animation_state_) * frame_height_ + 32;
-      dest_rect.y = collision_box_.y - camera_y_ - 80;
+      dest_rect.y = collision_box_.y - camera_y_ - 120;
       break;
     case OrcEnemyState::BasicAttack:
       src_rect.y = static_cast<int>(animation_state_) * frame_height_ + 32;
@@ -209,11 +230,33 @@ void Orc::render()
 
   if (flip_ == SDL_FLIP_NONE)
   {
-    dest_rect.x = collision_box_.x - camera_x_ -96;
+    dest_rect.x = collision_box_.x - camera_x_ -120;
   }
   else
   {
-    dest_rect.x = collision_box_.x - camera_x_ -32;
+    dest_rect.x = collision_box_.x - camera_x_ -10;
   }
   SDL_RenderCopyExF(renderer_, sprite_, &src_rect, &dest_rect, 0, nullptr, flip_);
+
+  SDL_FRect adjusted_health_bar_border = {
+    health_bar_border_.x - camera_x_,
+    health_bar_border_.y - camera_y_,
+    health_bar_border_.w,
+    health_bar_border_.h
+  };
+
+  SDL_FRect adjusted_health_bar = {
+    health_bar_.x - camera_x_,
+    health_bar_.y - camera_y_,
+    health_bar_.w,
+    health_bar_.h
+  };
+
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+  SDL_RenderFillRectF(renderer_, &adjusted_health_bar_border);
+  SDL_RenderDrawRectF(renderer_, &adjusted_health_bar_border);
+
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
+  SDL_RenderFillRectF(renderer_, &adjusted_health_bar);
+  SDL_RenderDrawRectF(renderer_, &adjusted_health_bar);
 }

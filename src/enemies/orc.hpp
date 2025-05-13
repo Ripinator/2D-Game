@@ -30,21 +30,25 @@ class Orc : public Enemy
     bool is_falling_ = false;
     int camera_x_ = 0;
     int camera_y_ = 0;
+    const float enemy_speed_ = 80.0f;
+    float move_x_;
+    float move_y_;
     float wait;
     OrcEnemyState animation_state_ = OrcEnemyState::Idle;
 
 
     public:
       Orc(Window &window, int x, int y, const SDL_Rect &floor_rect);
+      ~Orc();
 
-      void update(const SDL_FRect &player_box, float delta_time) override;
+      void update(const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attack_hitboxes, float delta_time) override;
       void render() override;
       SDL_FRect getCollisionBox() override
       {
         return collision_box_;
       }
       void setCameraOffset(int x, int y) override;
-      void animate();
+      void animate(float delta_time);
       void setTiles(std::vector<Tile> *tiles) override;
       void setEnemyPosition(int position_x, int position_y) override;
 };
