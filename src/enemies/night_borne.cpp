@@ -19,7 +19,7 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   wait = 0;
   move_x_ = 0.0f;
   move_y_ = 0.0f;
-
+  health_ = 5;
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
@@ -33,6 +33,16 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   collision_box_.y = y;
   collision_box_.w = 64;
   collision_box_.h = 64;
+  
+  health_bar_.x = x;
+  health_bar_.y = y;
+  health_bar_.w = 54;
+  health_bar_.h = 8;
+
+  health_bar_border_.x = x;
+  health_bar_border_.y = y;
+  health_bar_border_.w = 56;
+  health_bar_border_.h = 10;
 
   frame_counts_[EnemyState::Idle] = 9;
   frame_counts_[EnemyState::Walking] = 6;
@@ -64,24 +74,24 @@ void NightBorne::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void NightBorne::update(const SDL_FRect &player_box, float delta_time)
+void NightBorne::update(const SDL_FRect &player_box, const std::array<SDL_FRect, 100> &player_attacks_hitboxes, float delta_time)
 {
   const int detection_range = 200;
   int distance_to_player = player_box.x - collision_box_.x;
 
-  if (std::abs(distance_to_player) < detection_range)
-  {
-    animation_state_ = EnemyState::Idle;
-    velocity_x_ = 0;
+  // if (std::abs(distance_to_player) < detection_range)
+  // {
+  //   animation_state_ = EnemyState::Idle;
+  //   velocity_x_ = 0;
 
-    flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-  }
-  else
-  {
-    animation_state_ = EnemyState::Walking;
-    velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
-    move_x_ = velocity_x_ * delta_time;
-  }
+  //   flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+  // }
+  // else
+  // {
+  //   animation_state_ = EnemyState::Walking;
+  //   velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
+  //   move_x_ = velocity_x_ * delta_time;
+  // }
 
   animate(delta_time);
 
@@ -125,6 +135,7 @@ void NightBorne::update(const SDL_FRect &player_box, float delta_time)
     collision_box_.h
   };
 
+  // iterating through every tile and checking if the object intersects with it 
   if (tiles_)
   {
     for (const Tile &tile : *tiles_)
@@ -151,6 +162,11 @@ void NightBorne::update(const SDL_FRect &player_box, float delta_time)
   }
 
   collision_box_.y = future_position_y.y;
+
+  health_bar_.x = collision_box_.x;
+  health_bar_.y = collision_box_.y - 35;
+  health_bar_border_.x = health_bar_.x - 1;
+  health_bar_border_.y = health_bar_.y - 1;
 }
 
 void NightBorne::setCameraOffset(int x, int y)
@@ -207,4 +223,27 @@ void NightBorne::render()
     dest_rect.x = collision_box_.x - camera_x_ -32;
   }
   SDL_RenderCopyExF(renderer_, sprite_, &src_rect, &dest_rect, 0, nullptr, flip_);
+
+
+  SDL_FRect adjusted_health_bar_border = {
+    health_bar_border_.x - camera_x_,
+    health_bar_border_.y - camera_y_,
+    health_bar_border_.w,
+    health_bar_border_.h
+  };
+
+  SDL_FRect adjusted_health_bar = {
+    health_bar_.x - camera_x_,
+    health_bar_.y - camera_y_,
+    health_bar_.w,
+    health_bar_.h
+  };
+
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+  SDL_RenderFillRectF(renderer_, &adjusted_health_bar_border);
+  SDL_RenderDrawRectF(renderer_, &adjusted_health_bar_border);
+
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
+  SDL_RenderFillRectF(renderer_, &adjusted_health_bar);
+  SDL_RenderDrawRectF(renderer_, &adjusted_health_bar);
 }

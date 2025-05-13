@@ -60,6 +60,8 @@ void GameScene::render()
     enemy->setCameraOffset(camera_x, camera_y);
     enemy->render();
 
+    // Debugging rect: this draws the hitbox
+
     // SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
     // SDL_FRect enemy_box = enemy->getCollisionBox();
     // enemy_box.x -= camera_x;
@@ -67,16 +69,22 @@ void GameScene::render()
     // SDL_RenderDrawRectF(renderer_, &enemy_box);
   }
 
-  // You can draw the hitbox for debugging with the following
+  // More hitbox rects
 
-  // SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
-  // SDL_FRect player_box = player_.getCollisionBox();
-  // player_box.x -= player_.getCameraOffsetX();
-  // player_box.y -= player_.getCameraOffsetY();
-  // SDL_RenderDrawRectF(renderer_, &player_box);
-
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
+  SDL_FRect player_box = player_.getCollisionBox();
+  player_box.x -= player_.getCameraOffsetX();
+  player_box.y -= player_.getCameraOffsetY();
+  SDL_RenderDrawRectF(renderer_, &player_box);
   player_.render();  
-  
+ 
+
+  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
+  SDL_FRect player_attackrange_box = player_.getAttackCollisionBox();
+  player_attackrange_box.x -= player_.getCameraOffsetX();
+  player_attackrange_box.y -= player_.getCameraOffsetY();
+  SDL_RenderDrawRectF(renderer_, &player_attackrange_box);
+  player_.render(); 
 }
 
 void GameScene::handleEvent(const SDL_Event& event) 

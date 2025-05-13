@@ -56,7 +56,7 @@ void MrProfessorWurst::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void MrProfessorWurst::update(const SDL_FRect &player_box, float delta_time)
+void MrProfessorWurst::update(const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attacks_hitboxes, float delta_time)
 {
   if (is_attacking_)
   {

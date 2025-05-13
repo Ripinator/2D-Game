@@ -25,6 +25,7 @@ class Player
     SDL_FPoint world_position_;
     SDL_FPoint render_size_;
     SDL_FRect collision_box_;
+    SDL_FRect attacking_collision_box;
     SDL_RendererFlip flip_;
     float velocity_x_ = 0.0f;
     float velocity_y_ = 0.0f;
@@ -37,6 +38,8 @@ class Player
     float camera_x_ = 0.0f;
     float camera_y_ = 0.0f;
     float move_x_; 
+
+    int attack_collisionbox_offset = 64;
 
     const float fall_multiplier_ = 2.5f;
     const float low_jump_multiplier_ = 3.0f;
@@ -71,6 +74,7 @@ class Player
 
     void setTiles(const std::vector<Tile> *tiles);
     SDL_FRect getCollisionBox() const;
+    SDL_FRect getAttackCollisionBox() const;
 
     void setCameraOffset(int cam_x, int cam_y)
     {

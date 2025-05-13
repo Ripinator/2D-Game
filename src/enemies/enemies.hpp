@@ -1,6 +1,7 @@
 #ifndef ENEMIES_HPP
 #define ENEMIES_HPP
 
+#define MAX_PLAYER_ATTACKS 100
 #include "scene.hpp"
 #include "game.hpp"
 #include "window.hpp"
@@ -9,6 +10,7 @@
 #include <SDL2/SDL_image.h>
 #include <unordered_map>
 #include <vector>
+#include <array>
 
 class Enemy
 {
@@ -18,6 +20,8 @@ class Enemy
     SDL_Surface *sprite_surface_;
     SDL_FRect enemy_rect_;
     SDL_Rect floor_rect_;
+    SDL_FRect health_bar_;
+    SDL_FRect health_bar_border_;
     int health_;
     int damage_;
     int speed_;
@@ -25,7 +29,7 @@ class Enemy
   public:
     Enemy(Window &window, const SDL_Rect &floor_rect)
     : renderer_(window.getRenderer()), floor_rect_(floor_rect) {}
-    virtual void update(const SDL_FRect& player_box, float delta_time) = 0;
+    virtual void update(const SDL_FRect& player_box, const std::array<SDL_FRect, 100> &player_attacks_hitboxes, float delta_time) = 0;
     virtual void render() = 0;
     virtual SDL_FRect getCollisionBox() = 0;
     virtual void setTiles(std::vector<Tile> *tiles) = 0;
