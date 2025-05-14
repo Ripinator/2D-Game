@@ -8,6 +8,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <unordered_map>
+#include <array>
 
 enum class PlayerState 
 {
@@ -25,7 +26,7 @@ class Player
     SDL_FPoint world_position_;
     SDL_FPoint render_size_;
     SDL_FRect collision_box_;
-    SDL_FRect attacking_collision_box;
+    std::array<SDL_FRect, MAX_PLAYER_ATTACKS> attack_collision_boxes_;
     SDL_RendererFlip flip_;
     float velocity_x_ = 0.0f;
     float velocity_y_ = 0.0f;
@@ -74,7 +75,7 @@ class Player
 
     void setTiles(const std::vector<Tile> *tiles);
     SDL_FRect getCollisionBox() const;
-    SDL_FRect getAttackCollisionBox() const;
+    const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &getAttackCollisionBoxes() const;
 
     void setCameraOffset(int cam_x, int cam_y)
     {

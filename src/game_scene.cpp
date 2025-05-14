@@ -1,6 +1,7 @@
 #include "game_scene.hpp"
 #include <SDL2/SDL_image.h>
 #include "game.hpp"
+#include <array>
 
 GameScene::GameScene(Window &window, GameState &game_state)
 : renderer_(window.getRenderer()), game_state_(game_state), player_(window)
@@ -80,10 +81,10 @@ void GameScene::render()
  
 
   SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
-  SDL_FRect player_attackrange_box = player_.getAttackCollisionBox();
-  player_attackrange_box.x -= player_.getCameraOffsetX();
-  player_attackrange_box.y -= player_.getCameraOffsetY();
-  SDL_RenderDrawRectF(renderer_, &player_attackrange_box);
+  std::array<SDL_FRect, MAX_PLAYER_ATTACKS> player_attackrange_box = player_.getAttackCollisionBoxes();
+  player_attackrange_box[0].x -= player_.getCameraOffsetX();
+  player_attackrange_box[0].y -= player_.getCameraOffsetY();
+  SDL_RenderDrawRectF(renderer_, &player_attackrange_box[0]);
   player_.render(); 
 }
 
@@ -105,6 +106,6 @@ void GameScene::update(float delta_time)
 
   for (auto& enemy : level_data_.enemies)
   {
-    enemy->update(player_.getCollisionBox(), delta_time);
+    enemy->update(player_.getCollisionBox(), player_.getAttackCollisionBoxes(), delta_time);
   }
 }

@@ -14,7 +14,8 @@ Player::Player(Window &window)
     current_frame_(0), 
     animation_timer_(0.0f),
     animation_speed_(100),
-    is_attacking_(false)
+    is_attacking_(false),
+    attack_collision_boxes_{}
 {
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();
@@ -33,12 +34,20 @@ Player::Player(Window &window)
   collision_box_.h = frame_height_;
   collision_box_.x = world_position_.x;
   collision_box_.y = world_position_.y;
-
-  attacking_collision_box.w = (frame_width_ / 3) * 2;
-  attacking_collision_box.h = (frame_height_ / 3) * 2;  
-  attacking_collision_box.x = world_position_.x + attack_collisionbox_offset;
-  attacking_collision_box.y = world_position_.y;
-
+ 
+  for (auto& box : attack_collision_boxes_)
+  {
+    box.x = 0;
+    box.y = 0;
+    box.w = 0;
+    box.h = 0;
+  }
+  
+  attack_collision_boxes_[0].w = (frame_width_ / 3) * 2;
+  attack_collision_boxes_[0].h = (frame_width_ / 3) * 2;
+  attack_collision_boxes_[0].x = world_position_.x + attack_collisionbox_offset;
+  attack_collision_boxes_[0].y = world_position_.y;
+  
   SDL_Surface *surface = IMG_Load("assets/WarriorMan-Sheet.png");
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
   SDL_FreeSurface(surface);
@@ -242,8 +251,8 @@ void Player::update(float delta_time)
     attack_offset = (flip_ == SDL_FLIP_NONE) ? 60.0f : -38.0f;
   }
 
-  attacking_collision_box.x = world_position_.x + attack_offset;
-  attacking_collision_box.y = world_position_.y;
+  attack_collision_boxes_[0].x = world_position_.x + attack_offset;
+  attack_collision_boxes_[0].y = world_position_.y;
 
   const float cam_smooth = 0.1f;
 
@@ -258,9 +267,9 @@ SDL_FRect Player::getCollisionBox() const
   return collision_box_;
 }
 
-SDL_FRect Player::getAttackCollisionBox() const
+const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &Player::getAttackCollisionBoxes() const
 {
-  return attacking_collision_box; 
+  return attack_collision_boxes_; 
 }
 
 void Player::render()
