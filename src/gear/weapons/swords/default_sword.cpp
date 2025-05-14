@@ -1,7 +1,7 @@
 #include "default_sword.hpp"
 
-DefaultSword::DefaultSword(WeaponType type, std::array<SDL_FRect, NUM_ATTACKS> attack_hitboxes) 
- : type_(type), attack_hitboxes_(attack_hitboxes)
+DefaultSword::DefaultSword(WeaponType weapon_type, std::array<SDL_FRect, NUM_ATTACKS> attack_hitboxes) 
+ : weapon_type_(weapon_type), attack_hitboxes_(attack_hitboxes)
 {
   for (auto &box : attack_hitboxes_)
   {
@@ -11,7 +11,7 @@ DefaultSword::DefaultSword(WeaponType type, std::array<SDL_FRect, NUM_ATTACKS> a
     box.h = 0;
   }
 
-  type_ = WeaponType::Sword;
+  weapon_type_ = WeaponType::Sword;
   base_damage_ = 1;
   rarity_ = 0.6;
 
