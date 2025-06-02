@@ -16,6 +16,7 @@ enum class GameState
   Settings = 4,
   Quit = 5,
   Console = 6,
+  QuitConsole = 7,
   None = 7
 };
 

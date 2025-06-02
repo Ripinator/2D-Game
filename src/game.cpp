@@ -1,4 +1,3 @@
-
 #include "game.hpp"
 #include "start_menu.hpp" 
 #include "game_scene.hpp"
@@ -26,7 +25,6 @@ void gameLoop(Window &window)
   
   while (running)
   {
-    
     Uint64 now = SDL_GetPerformanceCounter();
     float delta_time = static_cast<float>(now - last_frame_time) / SDL_GetPerformanceFrequency();
     last_frame_time = now;
@@ -38,18 +36,18 @@ void gameLoop(Window &window)
         running = false;
       }
 
-      if (console_overlay)
+      if (console_overlay && state == GameState::Console)
       {
         console_overlay->handleEvent(event);
       }
-      else
+      else if (currentScene)
       {
         currentScene->handleEvent(event);
       }
     }
     
     currentScene->update(delta_time);
-    if (console_overlay)
+    if (console_overlay && state == GameState::Console)
     {
       console_overlay->update(delta_time);
     }
@@ -58,7 +56,7 @@ void gameLoop(Window &window)
     SDL_RenderClear(renderer);
     currentScene->render();
 
-    if (console_overlay)
+    if (console_overlay && state == GameState::Console)
     {
       console_overlay->render();
     }
@@ -86,15 +84,20 @@ void gameLoop(Window &window)
       }
       else if (state == GameState::Console)
       {
-        printf("hello");
+        previousState = previousState != GameState::Console ? previousState : state;
         console_overlay = std::make_unique<Console>(window, bodyFont, state);
       }
-      // else if (console_overlay && state == GameState::None)
-      // {
-      //   console_overlay.reset();
-      // }
+      else if (state == GameState::QuitConsole)
+      {
+        state = previousState;
+        console_overlay.reset();
+        continue;
+      }
 
-      previousState = state;
+      if (state != GameState::QuitConsole && state != GameState::Console)
+      {
+        previousState = state;
+      }
     }
 
     
