@@ -7,13 +7,20 @@
 #include "window.hpp"
 #include <vector>
 
-class Console : public Scene
+class Console
 {
   private:
     SDL_Renderer *renderer_;
     Window &window_;
-    SDL_Event event;
+    SDL_Event event_;
     SDL_Rect console_rect_;
+    // The console top bar is the grey bar which says console
+    SDL_Rect console_top_bar_rect_;
+    SDL_Rect console_top_bar_text_rect_;
+    SDL_Rect command_line_rect_;
+    SDL_Rect command_line_text_rect_;
+    SDL_Texture *texture_console_top_bar_text_;
+    SDL_Texture *text_texture_command_line_;
     TTF_Font *font_;
     GameState &game_state_;
     int width_;
@@ -21,9 +28,11 @@ class Console : public Scene
 
   public:
     Console(Window &window, TTF_Font *font, GameState &game_state);
-    void handleEvent(const SDL_Event &event) override;
-    void update(float delta_time) override;
-    void render() override;
+    ~Console();
+    SDL_Texture *createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect &outRect);
+    void handleEvent(const SDL_Event &event);
+    void update(float delta_time);
+    void render();
 };
 
 #endif
