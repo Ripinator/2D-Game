@@ -117,6 +117,10 @@ void StartMenu::handleEvent(const SDL_Event &event)
       setType(GameState::Settings);
     }
   }
+  else if (event.key.keysym.sym == SDLK_F2)
+  {
+    setType(GameState::Console);
+  }
 }
 
 void StartMenu::update(float delta_time) 

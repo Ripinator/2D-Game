@@ -1,8 +1,8 @@
-
 #include "game.hpp"
 #include "start_menu.hpp" 
 #include "game_scene.hpp"
 #include "settings_menu.hpp"
+#include "menus/console.hpp"
 #include <limits.h>
 #include <iostream>
 #include <memory>
@@ -15,6 +15,7 @@ void gameLoop(Window &window)
   GameState state = GameState::Menu;
   GameState previousState = GameState::None;
 
+  std::unique_ptr<Console> console_overlay;
   std::unique_ptr<Scene> currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
 
   bool running = true;
@@ -24,7 +25,6 @@ void gameLoop(Window &window)
   
   while (running)
   {
-    
     Uint64 now = SDL_GetPerformanceCounter();
     float delta_time = static_cast<float>(now - last_frame_time) / SDL_GetPerformanceFrequency();
     last_frame_time = now;
@@ -35,14 +35,32 @@ void gameLoop(Window &window)
       {
         running = false;
       }
-      currentScene->handleEvent(event);
-    }
 
+      if (console_overlay && state == GameState::Console)
+      {
+        console_overlay->handleEvent(event);
+      }
+      else if (currentScene)
+      {
+        currentScene->handleEvent(event);
+      }
+    }
+    
     currentScene->update(delta_time);
+    if (console_overlay && state == GameState::Console)
+    {
+      console_overlay->update(delta_time);
+    }
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     currentScene->render();
+
+    if (console_overlay && state == GameState::Console)
+    {
+      console_overlay->render();
+    }
+
     SDL_RenderPresent(renderer);
 
     if (state != previousState)
@@ -64,8 +82,25 @@ void gameLoop(Window &window)
       {
         currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
       }
-      previousState = state;
+      else if (state == GameState::Console)
+      {
+        previousState = previousState != GameState::Console ? previousState : state;
+        console_overlay = std::make_unique<Console>(window, bodyFont, state);
+      }
+      else if (state == GameState::QuitConsole)
+      {
+        state = previousState;
+        console_overlay.reset();
+        continue;
+      }
+
+      if (state != GameState::QuitConsole && state != GameState::Console)
+      {
+        previousState = state;
+      }
     }
+
+    
     
     Uint64 frame_end_time = SDL_GetPerformanceCounter();
     float frame_time = static_cast<float>(frame_end_time - now) / SDL_GetPerformanceFrequency();
