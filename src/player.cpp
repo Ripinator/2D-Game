@@ -1,7 +1,7 @@
 #include "player.hpp"
-#include "default_sword.hpp"
 #include <string>
 #include <iostream>
+#include "gear/weapons/swords/default_sword.hpp"
 
 Player::Player(Window &window) 
   : renderer_(window.getRenderer()),
@@ -15,8 +15,7 @@ Player::Player(Window &window)
     current_frame_(0), 
     animation_timer_(0.0f),
     animation_speed_(100),
-    is_attacking_(false),
-    attack_collision_boxes_{}
+    is_attacking_(false)
 {
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();
@@ -35,23 +34,18 @@ Player::Player(Window &window)
   collision_box_.h = frame_height_;
   collision_box_.x = world_position_.x;
   collision_box_.y = world_position_.y;
- 
+
   SDL_Surface *surface = IMG_Load("assets/WarriorMan-Sheet.png");
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
   SDL_FreeSurface(surface);
 
-  std::array<SDL_FRect, NUM_ATTACKS> default_weapon_hitboxes = {};
-  current_weapon_ = std::make_unique<DefaultSword>(WeaponType::Sword, default_weapon_hitboxes);
-}
+  frame_counts_[PlayerState::Standing] = 8;
+  frame_counts_[PlayerState::Walk] = 8;
+  frame_counts_[PlayerState::Walk] = 8;
+  frame_counts_[PlayerState::Jumping] = 11;
+  frame_counts_[PlayerState::AttackLMB] = 5;
 
-void Player::equipWeapon(std::unique_ptr<Weapon> weapon)
-{
-  current_weapon_ = std::move(weapon);
-}
-
-Weapon *Player::getWeapon() const
-{
-  return current_weapon_.get();
+  current_weapon_ = std::make_unique<DefaultSword>(renderer_);
 }
 
 void Player::handleInput(const SDL_Event &event)
@@ -70,7 +64,7 @@ void Player::handleInput(const SDL_Event &event)
     {
       is_attacking_ = true;
       attack_animation_done_ = false;
-      animation_state_ = WeaponState::AttackMouseLeft;
+      animation_state_ = PlayerState::AttackLMB;
       current_frame_ = 0;
       animation_timer_ = 0.0f;
     }
@@ -84,26 +78,7 @@ void Player::setTiles(const std::vector<Tile> *tiles)
 
 void Player::animate(float delta_time)
 {
-  animation_timer_ += delta_time * 1000.0f;
-  if (animation_timer_ >= animation_speed_)
-  {
-    int max_frames = frame_counts_[animation_state_];
-    current_frame_++;
-
-    if (animation_state_ == WeaponState::AttackMouseLeft && current_frame_ >= max_frames)
-    {
-      is_attacking_ = false;
-      attack_animation_done_ = true;
-      current_frame_ = 0;
-      animation_state_ = WeaponState::Standing;
-    }
-    else
-    {
-      current_frame_ %= max_frames;
-    }
-
-    animation_timer_ = 0.0f;
-  }
+  current_weapon_->animate(delta_time, animation_state_);
 }
 
 void Player::setPlayerPosition(float position_x, float position_y)
@@ -121,7 +96,7 @@ void Player::update(float delta_time)
 
   if (is_attacking_)
   {
-    animation_state_ = WeaponState::AttackMouseLeft;
+    animation_state_ = PlayerState::AttackLMB;
     velocity_x_ = 0;
     move_x_ = 0;
     animate(delta_time);
@@ -131,7 +106,7 @@ void Player::update(float delta_time)
     flip_ = SDL_FLIP_NONE;
     velocity_x_ = player_speed;
     move_x_ = velocity_x_ * delta_time;
-    animation_state_ = WeaponState::Walk;
+    animation_state_ = PlayerState::Walk;
     animate(delta_time);
   }
   else if (keystate[SDL_SCANCODE_A])
@@ -139,19 +114,19 @@ void Player::update(float delta_time)
     flip_ = SDL_FLIP_HORIZONTAL;
     velocity_x_ = -player_speed;
     move_x_ = velocity_x_ * delta_time;
-    animation_state_ = WeaponState::Walk;
+    animation_state_ = PlayerState::Walk;
     animate(delta_time);
   }
   else if (is_jumping_)
   {
-    animation_state_ = WeaponState::Jumping;
+    animation_state_ = PlayerState::Jumping;
     animate(delta_time);
   }
   else
   {
     velocity_x_ = 0;
     move_x_ = 0;
-    animation_state_ = WeaponState::Standing;
+    animation_state_ = PlayerState::Standing;
     animate(delta_time);
   }
 
@@ -246,9 +221,6 @@ void Player::update(float delta_time)
     attack_offset = (flip_ == SDL_FLIP_NONE) ? 60.0f : -38.0f;
   }
 
-  attack_collision_boxes_[0].x = world_position_.x + attack_offset;
-  attack_collision_boxes_[0].y = world_position_.y;
-
   const float cam_smooth = 0.1f;
 
   camera_x_ += (world_position_.x - camera_x_ - screen_width_ / 2.0f) * cam_smooth;
@@ -262,36 +234,12 @@ SDL_FRect Player::getCollisionBox() const
   return collision_box_;
 }
 
-const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &Player::getAttackCollisionBoxes() const
+std::array<SDL_FRect, MAX_PLAYER_ATTACKS> Player::getAttackCollisionBox() const
 {
   return attack_collision_boxes_; 
 }
 
 void Player::render()
 {
-  const int scale = 3;
-
-  SDL_Rect src_rect;
-  src_rect.x = current_frame_ * (frame_width_ + 16);
-  src_rect.y = static_cast<int>(animation_state_) * frame_height_;
-  src_rect.w = frame_width_;
-  src_rect.h = frame_height_;
-  
-  float rounded_camera_x = std::round(camera_x_);
-  float rounded_camera_y = std::round(camera_y_);
-
-  SDL_FRect dest_rect;
-  dest_rect.y = world_position_.y - rounded_camera_y - 80.0f;
-  dest_rect.w = frame_width_* scale;
-  dest_rect.h = frame_height_ * scale;
-  if (flip_ == SDL_FLIP_NONE)
-  {
-    dest_rect.x = world_position_.x - rounded_camera_x - 96.0f;
-  }
-  else if (flip_ == SDL_FLIP_HORIZONTAL)
-  {
-    dest_rect.x = world_position_.x - rounded_camera_x - 32.0f;
-  }
-
-  SDL_RenderCopyExF(renderer_, sprite_sheet_, &src_rect, &dest_rect, 0, nullptr, flip_);
+  current_weapon_->render(flip_);
 }

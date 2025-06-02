@@ -5,27 +5,29 @@
 
 #define NUM_ATTACKS 8
 
-enum class AnimationState
+enum class AnimationStateFrames
 {
   Idle = 8,
   Walk = 8,
-  Jumping = 5,
-  AttackMouseLeft = 14
+  Jump = 5,
+  AttackLMB = 14
 };
 
 class DefaultSword : public Weapon
 {
   private:
-    int base_damage_;
-    WeaponType weapon_type_;
     std::array<SDL_FRect, NUM_ATTACKS> attack_hitboxes_;
-    std::unordered_map<AnimationState, int> frame_counts_;
+    std::unordered_map<AnimationStateFrames, int> frame_counts_;
+    AnimationState animation_state_ = AnimationState::Idle;
 
   public:
-    DefaultSword(WeaponType weapon_type, std::array<SDL_FRect, NUM_ATTACKS> attack_hitboxes);
-    
-    std::array<SDL_FRect, NUM_ATTACKS> get_hitboxes();
-
+    DefaultSword(SDL_Renderer *renderer);
+    SDL_FRect getAttackCollisionBox() const override;
+    void attack() override;
+    void render(SDL_RendererFlip flip) override;
+    void update(float delta_time) override;
+    void animate(float delta_time, std::any AnimationState) override;
+    AnimationStateFrames assignAnimationState(AnimationState animation_state);
 };
 
 #endif

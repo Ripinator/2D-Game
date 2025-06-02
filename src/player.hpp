@@ -1,24 +1,29 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-// The asset used for the player is from here: https://dreamir.itch.io/characters-pack
-
 #include "scene.hpp"
 #include "game.hpp"
 #include "window.hpp"
 #include "level_builder.hpp"
-#include "gear/armor.hpp"
-#include "gear/weapon.hpp"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <unordered_map>
-#include <array>
+#include "gear/weapon.hpp"
+#include "gear/armor.hpp"
 
-enum class WeaponState 
+enum class PlayerState 
+{
+  Standing = 0,
+  Jumping = 1,
+  Walk = 2,
+  AttackLMB = 3
+};
+
+enum class WeaponState
 {
   NoItem = 0,
   DefaultSword = 1,
-  SamuraiSword = 2,
+  SamuraiSword = 2
 };
 
 enum class ArmorState
@@ -30,9 +35,11 @@ class Player
 {
   private:
     SDL_Renderer *renderer_;
+
     SDL_FPoint world_position_;
     SDL_FPoint render_size_;
     SDL_FRect collision_box_;
+    //SDL_FRect attacking_collision_box;
     std::array<SDL_FRect, MAX_PLAYER_ATTACKS> attack_collision_boxes_;
     SDL_RendererFlip flip_;
     float velocity_x_ = 0.0f;
@@ -46,8 +53,8 @@ class Player
     float camera_x_ = 0.0f;
     float camera_y_ = 0.0f;
     float move_x_; 
-    WeaponState current_weapon_;
-    ArmorState current_armor_;
+    WeaponState weapon_;
+    ArmorState armor_;
     std::unique_ptr<Weapon> current_weapon_;
 
     int attack_collisionbox_offset = 64;
@@ -64,8 +71,8 @@ class Player
     bool attack_animation_done_;
 
     const std::vector<Tile> *tiles_;
-    WeaponState animation_state_ = WeaponState::DefaultSword;
-    bool attack_animation_done_;
+    PlayerState animation_state_ = PlayerState::Standing;
+    std::unordered_map<PlayerState, int> frame_counts_;
 
     int screen_height_;
     int screen_width_;
@@ -88,7 +95,7 @@ class Player
     void attack();
     void setTiles(const std::vector<Tile> *tiles);
     SDL_FRect getCollisionBox() const;
-    const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &getAttackCollisionBoxes() const;
+    std::array<SDL_FRect, MAX_PLAYER_ATTACKS> getAttackCollisionBox() const;
 
     void setCameraOffset(int cam_x, int cam_y)
     {
