@@ -81,7 +81,7 @@ void GameScene::render()
  
 
   SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
-  std::array<SDL_FRect, MAX_PLAYER_ATTACKS> player_attackrange_box = player_.getAttackCollisionBoxes();
+  std::array<SDL_FRect, MAX_PLAYER_ATTACKS> player_attackrange_box = player_.getAttackCollisionBox();
   player_attackrange_box[0].x -= player_.getCameraOffsetX();
   player_attackrange_box[0].y -= player_.getCameraOffsetY();
   SDL_RenderDrawRectF(renderer_, &player_attackrange_box[0]);
@@ -106,6 +106,6 @@ void GameScene::update(float delta_time)
 
   for (auto& enemy : level_data_.enemies)
   {
-    enemy->update(player_.getCollisionBox(), player_.getAttackCollisionBoxes(), delta_time);
+    enemy->update(player_.getCollisionBox(), player_.getAttackCollisionBox(), delta_time);
   }
 }
