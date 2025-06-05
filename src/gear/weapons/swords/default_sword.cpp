@@ -50,10 +50,7 @@ bool DefaultSword::animate(float delta_time, std::any animation_state_any)
   {
     AnimationStateFrames animation_state = assignAnimationState(std::any_cast<PlayerState>(animation_state_any));
     animation_state_ = animation_state;
-    // Reset attack_animation_done_ unless we're in AttackLMB and it's not finished
-    // if (animation_state != AnimationStateFrames::AttackLMB) {
-    //   attack_animation_done_ = true;
-    // }
+
     animation_time_ += delta_time * 1000.0f;
     if (animation_time_ >= animation_speed_)
     {
