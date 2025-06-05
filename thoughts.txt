@@ -11,3 +11,7 @@ The player will also encounter different types of floors that might or might not
 Idea 3:
 Idea 4:
 Idea 5:
+
+Note 1:
+https://youtu.be/M2ZW4uwxU8k?t=1451
+Windows Debugger Recommendation

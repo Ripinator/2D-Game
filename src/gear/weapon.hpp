@@ -23,13 +23,13 @@ enum class Swords
   SamuraiSword
 };
 
-enum class AnimationState
-{
-  Idle = 0,
-  Walk = 1,
-  Jump = 2,
-  AttackLMB = 3
-}; 
+// enum class AnimationState
+// {
+//   Idle = 0,
+//   Walk = 1,
+//   Jump = 2,
+//   AttackLMB = 3
+// }; 
 
 class Weapon
 {
@@ -65,7 +65,7 @@ class Weapon
     virtual void attack() = 0;
     virtual void update(float delta_time) = 0;
     virtual void render(SDL_RendererFlip flip) = 0;
-    virtual void animate(float delta_time, std::any animation_state) = 0;
+    virtual bool animate(float delta_time, std::any animation_state) = 0;
     virtual SDL_FRect getAttackCollisionBox() const = 0;
     //virtual SDL_FPoint getMovementOffset() const = 0;
 };

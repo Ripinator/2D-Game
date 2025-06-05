@@ -65,7 +65,7 @@ StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, Game
   settings_menu_rect_.x = menu_rect_.x + (menu_rect_.w - quit_rect_.w) / 2;
   settings_menu_rect_.y = menu_rect_.y + (menu_rect_.h - quit_rect_.h) / 2;
 
-  text_texture_header_ = createText("Sworld Lord", header_font_, white, text_header_rect_);
+  text_texture_header_ = createText("Sword Lord", header_font_, white, text_header_rect_);
   text_texture_start_ = createText("Start", font_, black, text_start_rect_);
   text_texture_quit_ = createText("Quit", font_, black, text_quit_rect_);
   text_texture_settings_ = createText("Settings", font_, black, text_settings_rect_);
