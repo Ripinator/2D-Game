@@ -39,12 +39,6 @@ Player::Player(Window &window)
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
   SDL_FreeSurface(surface);
 
-  frame_counts_[PlayerState::Standing] = 8;
-  frame_counts_[PlayerState::Walk] = 8;
-  frame_counts_[PlayerState::Walk] = 8;
-  frame_counts_[PlayerState::Jumping] = 11;
-  frame_counts_[PlayerState::AttackLMB] = 5;
-
   current_weapon_ = std::make_unique<DefaultSword>(renderer_);
 }
 
@@ -64,7 +58,7 @@ void Player::handleInput(const SDL_Event &event)
     {
       is_attacking_ = true;
       attack_animation_done_ = false;
-      animation_state_ = PlayerState::AttackLMB;
+      animation_state_ = PlayerState::AttackLMB;                             
       current_frame_ = 0;
       animation_timer_ = 0.0f;
     }
@@ -78,7 +72,7 @@ void Player::setTiles(const std::vector<Tile> *tiles)
 
 void Player::animate(float delta_time)
 {
-  current_weapon_->animate(delta_time, animation_state_);
+  attack_animation_done_ = current_weapon_->animate(delta_time, animation_state_);
 }
 
 void Player::setPlayerPosition(float position_x, float position_y)
@@ -126,7 +120,7 @@ void Player::update(float delta_time)
   {
     velocity_x_ = 0;
     move_x_ = 0;
-    animation_state_ = PlayerState::Standing;
+    animation_state_ = PlayerState::Idle;
     animate(delta_time);
   }
 
@@ -165,9 +159,13 @@ void Player::update(float delta_time)
       if (SDL_HasIntersectionF(&future_position_x, &tile_rect))
       {
         if (move_x_ >= 0)
+        {
           future_position_x.x = tile_rect.x - future_position_x.w;
+        }
         else if (move_x_ < 0)
+        {
           future_position_x.x = tile_rect.x + tile_rect.w;
+        }
 
         velocity_x_ = 0;
         move_x_ = 0;

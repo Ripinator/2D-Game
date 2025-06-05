@@ -13,7 +13,7 @@
 
 enum class PlayerState 
 {
-  Standing = 0,
+  Idle = 0,
   Jumping = 1,
   Walk = 2,
   AttackLMB = 3
@@ -71,7 +71,7 @@ class Player
     bool attack_animation_done_;
 
     const std::vector<Tile> *tiles_;
-    PlayerState animation_state_ = PlayerState::Standing;
+    PlayerState animation_state_ = PlayerState::Idle;
     std::unordered_map<PlayerState, int> frame_counts_;
 
     int screen_height_;

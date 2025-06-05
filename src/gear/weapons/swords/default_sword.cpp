@@ -44,12 +44,16 @@ void DefaultSword::attack()
  // is_attacking_ = true;
 }
 
-void DefaultSword::animate(float delta_time, std::any animation_state_any)
+bool DefaultSword::animate(float delta_time, std::any animation_state_any)
 {
   try
   {
-    AnimationStateFrames animation_state = assignAnimationState(std::any_cast<AnimationState>(animation_state_any));
-
+    AnimationStateFrames animation_state = assignAnimationState(std::any_cast<PlayerState>(animation_state_any));
+    animation_state_ = animation_state;
+    // Reset attack_animation_done_ unless we're in AttackLMB and it's not finished
+    // if (animation_state != AnimationStateFrames::AttackLMB) {
+    //   attack_animation_done_ = true;
+    // }
     animation_time_ += delta_time * 1000.0f;
     if (animation_time_ >= animation_speed_)
     {
@@ -61,7 +65,7 @@ void DefaultSword::animate(float delta_time, std::any animation_state_any)
         is_attacking_ = false;
         attack_animation_done_ = true;
         current_frame_ = 0;
-        animation_state = AnimationStateFrames::Idle;
+        animation_state_ = AnimationStateFrames::Idle;
       }
       else
       {
@@ -70,37 +74,40 @@ void DefaultSword::animate(float delta_time, std::any animation_state_any)
 
       animation_time_ = 0.0f;
     }
+
+    return attack_animation_done_;
   }
   catch(const std::bad_any_cast &e)
   {
     std::cerr << "ERROR: INVALID animation state in default sword" << "Exception: " << e.what() << std::endl;
+    return false;
   }
-
 }
 
-AnimationStateFrames DefaultSword::assignAnimationState(AnimationState animation_state)
+AnimationStateFrames DefaultSword::assignAnimationState(PlayerState animation_state)
 {
   AnimationStateFrames current_animation_frame_count;
 
   switch (animation_state)
   {
-  case (AnimationState::Idle):
+  case (PlayerState::Idle):
     current_animation_frame_count = AnimationStateFrames::Idle;
     break;
 
-  case (AnimationState::Walk):
+  case (PlayerState::Walk):
     current_animation_frame_count = AnimationStateFrames::Walk;
     break;
 
-  case (AnimationState::Jump):
+  case (PlayerState::Jumping):
     current_animation_frame_count = AnimationStateFrames::Jump;
     break;
     
-  case (AnimationState::AttackLMB):
+  case (PlayerState::AttackLMB):
     current_animation_frame_count = AnimationStateFrames::AttackLMB;
     break;
 
   default:
+    current_animation_frame_count = AnimationStateFrames::Idle;
     break;
   }
 
@@ -108,21 +115,7 @@ AnimationStateFrames DefaultSword::assignAnimationState(AnimationState animation
 }
 
 void DefaultSword::update(float delta_time)
-{
-  // float attack_offset = 0.0f;
-  // if (is_attacking_)
-  // {
-  //   attack_offset = (flip_ == SDL_FLIP_NONE) ? 60.0f : - 38.0f;
-  // }
-
-  // attack_hitboxes_[0].x = collision_box_.x + attack_offset;
-  // attack_hitboxes_[0].y = collision_box_.y;
-}
-
-// std::array<SDL_FRect, NUM_ATTACKS> DefaultSword::()
-// {
-//   return attack_hitboxes_;
-// }
+{}
 
 SDL_FRect DefaultSword::getAttackCollisionBox() const
 {
@@ -137,17 +130,17 @@ void DefaultSword::render(SDL_RendererFlip flip)
   src_rect_.h = frame_height_;
 
   dest_rect_.x = collision_box_.x;
-  dest_rect_.y = collision_box_.y - 80.0f;
+  dest_rect_.y = collision_box_.y + 905.0f;
   dest_rect_.w = frame_width_ * 3;
   dest_rect_.h = frame_height_ * 3;
 
-  if (flip = SDL_FLIP_NONE)
+  if (flip == SDL_FLIP_NONE)
   {
-    dest_rect_.x = collision_box_.x - 96.0f;
+    dest_rect_.x = collision_box_.x + 1090.0f;
   }
-  else if (flip = SDL_FLIP_HORIZONTAL)
+  else if (flip == SDL_FLIP_HORIZONTAL)
   {
-    dest_rect_.x = collision_box_.x - 32.0f;
+    dest_rect_.x = collision_box_.x + 1152.0f;
   }
 
   SDL_RenderCopyExF(renderer_, sprite_, &src_rect_, &dest_rect_, 0, nullptr, flip);
