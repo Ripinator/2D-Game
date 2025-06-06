@@ -5,6 +5,7 @@
 #include "scene.hpp"
 #include "game.hpp"
 #include "window.hpp"
+#include <iostream>
 #include <vector>
 
 class Console
@@ -22,12 +23,15 @@ class Console
     SDL_Rect command_line_border_rect_;
     // The cursor that shows you where you are in a text editor(here the commandline)
     SDL_Rect block_cursor_;
+    SDL_Rect input_text_rect_;
     SDL_Texture *texture_console_top_bar_text_;
     SDL_Texture *text_texture_command_line_;
+    SDL_Texture *input_text_texture_;
     TTF_Font *font_;
     GameState &game_state_;
     int width_;
     int height_;
+    std::string input_text_;
 
   public:
     Console(Window &window, TTF_Font *font, GameState &game_state);
