@@ -17,12 +17,22 @@ Console::Console(Window &window, TTF_Font *font, GameState &game_state)
   console_top_bar_rect_.y = 0;
 
   command_line_rect_.w = width_;
-  command_line_rect_.h = height_ / 40;
+  command_line_rect_.h = height_ / 30;
   command_line_rect_.x = 0;
   command_line_rect_.y = height_;
 
+  command_line_border_rect_.w = width_ - 8;
+  command_line_border_rect_.h = height_ / 30 - 8;
+  command_line_border_rect_.x = 4;
+  command_line_border_rect_.y = height_ + 4;
+
   console_top_bar_text_rect_.x = 0;
   console_top_bar_text_rect_.y = -2;
+
+  block_cursor_.w = 10;
+  block_cursor_.h = 20;
+  block_cursor_.x = 5;
+  block_cursor_.y = height_ + 6;
 
   SDL_Color black = {0, 0, 0, 255};
 
@@ -76,16 +86,24 @@ void Console::render()
   // SDL_GetMouseState(&mouse_x, &mouse_y);
   // SDL_Point mouse_point = {mouse_x, mouse_y};
 
-  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
-  SDL_RenderFillRect(renderer_, &console_rect_);
-  SDL_RenderDrawRect(renderer_, &console_rect_);
+  // SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+  // SDL_RenderFillRect(renderer_, &console_rect_);
+  // SDL_RenderDrawRect(renderer_, &console_rect_);
 
-  SDL_SetRenderDrawColor(renderer_, 128, 128, 128, 255);
-  SDL_RenderFillRect(renderer_, &console_top_bar_rect_);
-  SDL_RenderDrawRect(renderer_, &console_top_bar_rect_);
+  // SDL_SetRenderDrawColor(renderer_, 128, 128, 128, 255);
+  // SDL_RenderFillRect(renderer_, &console_top_bar_rect_);
+  // SDL_RenderDrawRect(renderer_, &console_top_bar_rect_);
 
-  SDL_RenderFillRect(renderer_, &command_line_rect_);
-  SDL_RenderDrawRect(renderer_, &command_line_rect_);
+  // SDL_RenderFillRect(renderer_, &command_line_rect_);
+  // SDL_RenderDrawRect(renderer_, &command_line_rect_);
 
-  SDL_RenderCopy(renderer_, texture_console_top_bar_text_, nullptr, &console_top_bar_text_rect_);
+  // SDL_SetRenderDrawColor(renderer_, 44, 44, 44, 255);
+  // SDL_RenderFillRect(renderer_, &command_line_border_rect_);
+  // SDL_RenderDrawRect(renderer_, &command_line_border_rect_);  
+
+  // SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
+  // SDL_RenderFillRect(renderer_, &block_cursor_);
+  // SDL_RenderDrawRect(renderer_, &block_cursor_);  
+
+  //SDL_RenderCopy(renderer_, texture_console_top_bar_text_, nullptr, &console_top_bar_text_rect_);
 }

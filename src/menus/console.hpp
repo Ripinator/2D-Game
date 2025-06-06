@@ -19,6 +19,9 @@ class Console
     SDL_Rect console_top_bar_text_rect_;
     SDL_Rect command_line_rect_;
     SDL_Rect command_line_text_rect_;
+    SDL_Rect command_line_border_rect_;
+    // The cursor that shows you where you are in a text editor(here the commandline)
+    SDL_Rect block_cursor_;
     SDL_Texture *texture_console_top_bar_text_;
     SDL_Texture *text_texture_command_line_;
     TTF_Font *font_;
