@@ -17,12 +17,29 @@ Console::Console(Window &window, TTF_Font *font, GameState &game_state)
   console_top_bar_rect_.y = 0;
 
   command_line_rect_.w = width_;
-  command_line_rect_.h = height_ / 40;
+  command_line_rect_.h = height_ / 30;
   command_line_rect_.x = 0;
   command_line_rect_.y = height_;
 
+  command_line_border_rect_.w = width_ - 8;
+  command_line_border_rect_.h = height_ / 30 - 8;
+  command_line_border_rect_.x = 4;
+  command_line_border_rect_.y = height_ + 4;
+
+  input_text_rect_.h = command_line_border_rect_.h;
+  input_text_rect_.w = command_line_border_rect_.w;
+  input_text_rect_.x = command_line_border_rect_.x + 5;
+  input_text_rect_.y = command_line_border_rect_.y - 3;
+
   console_top_bar_text_rect_.x = 0;
   console_top_bar_text_rect_.y = -2;
+
+  block_cursor_.w = 10;
+  block_cursor_.h = 20;
+  block_cursor_.x = 5;
+  block_cursor_.y = height_ + 6;
+
+  input_text_texture_ = nullptr;
 
   SDL_Color black = {0, 0, 0, 255};
 
@@ -35,15 +52,26 @@ Console::~Console()
   {
     SDL_DestroyTexture(texture_console_top_bar_text_);
   }
+  if (input_text_texture_)
+  {
+    SDL_DestroyTexture(input_text_texture_);
+  }
   // if (text_texture_command_line_) 
   // {
   //   SDL_DestroyTexture(text_texture_command_line_);
   // }
+  //SDL_StopTextInput();
 }
 
 SDL_Texture *Console::createText(const std::string& text, TTF_Font* font, SDL_Color color, SDL_Rect& outRect)
 {
   SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), color);
+  if (!surface)
+  {
+    std::cerr << "Failed to render text surface: " << TTF_GetError() << std::endl;
+    outRect.w = outRect.h = 0;
+    return nullptr;
+  }
   SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer_, surface);
   outRect.w = surface->w;
   outRect.h = surface->h;
@@ -57,9 +85,36 @@ void Console::handleEvent(const SDL_Event &event)
   {
     if (event.key.keysym.sym == SDLK_F3)
     {
+      SDL_StopTextInput();
       game_state_ = GameState::QuitConsole;
     }
+    else if (event.key.keysym.sym == SDLK_BACKSPACE && !input_text_.empty())
+    {
+      input_text_.pop_back(); 
+    }
+    else if (event.key.keysym.sym == SDLK_RETURN)
+    {
+      // do something here handle commands
+      input_text_.clear();
+    }
   }
+  else if (event.type == SDL_TEXTINPUT)
+  {
+    std::string char_to_append = event.text.text;
+    input_text_.append(char_to_append);
+    //std::cout << input_text_ << std::endl;
+  }
+
+  SDL_Color white = {255, 255, 255, 255};
+  if (input_text_.length() != 0)
+  {
+    input_text_texture_ = createText(input_text_, font_, white, input_text_rect_);
+  }
+  
+  if (input_text_.length() != 0)
+  {
+    input_text_rect_.x = command_line_border_rect_.x + 4;
+  } 
 }
 
 void Console::update(float delta_time)
@@ -69,13 +124,6 @@ void Console::update(float delta_time)
 
 void Console::render()
 {
-  // SDL_ShowCursor(SDL_ENABLE);
-  // SDL_Color black = {0, 0, 0, 255};
-
-  // int mouse_x, mouse_y;
-  // SDL_GetMouseState(&mouse_x, &mouse_y);
-  // SDL_Point mouse_point = {mouse_x, mouse_y};
-
   SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
   SDL_RenderFillRect(renderer_, &console_rect_);
   SDL_RenderDrawRect(renderer_, &console_rect_);
@@ -87,5 +135,14 @@ void Console::render()
   SDL_RenderFillRect(renderer_, &command_line_rect_);
   SDL_RenderDrawRect(renderer_, &command_line_rect_);
 
+  SDL_SetRenderDrawColor(renderer_, 44, 44, 44, 255);
+  SDL_RenderFillRect(renderer_, &command_line_border_rect_);
+  SDL_RenderDrawRect(renderer_, &command_line_border_rect_);  
+
+  SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
+  SDL_RenderFillRect(renderer_, &block_cursor_);
+  SDL_RenderDrawRect(renderer_, &block_cursor_);  
+
   SDL_RenderCopy(renderer_, texture_console_top_bar_text_, nullptr, &console_top_bar_text_rect_);
+  SDL_RenderCopy(renderer_, input_text_texture_, nullptr, &input_text_rect_);
 }

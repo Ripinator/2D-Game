@@ -14,6 +14,7 @@ void gameLoop(Window &window)
   TTF_Font* bodyFont = TTF_OpenFont("assets/fonts/CinzelDecorative-Bold.ttf", 24);
   GameState state = GameState::Menu;
   GameState previousState = GameState::None;
+  bool console_created = false;
 
   std::unique_ptr<Console> console_overlay;
   std::unique_ptr<Scene> currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
@@ -82,14 +83,15 @@ void gameLoop(Window &window)
       {
         currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
       }
-      else if (state == GameState::Console)
+      else if (state == GameState::Console && console_created == false)
       {
+        console_created = true;
         previousState = previousState != GameState::Console ? previousState : state;
         console_overlay = std::make_unique<Console>(window, bodyFont, state);
       }
       else if (state == GameState::QuitConsole)
       {
-        state = previousState;
+        state = previousState; 
         console_overlay.reset();
         continue;
       }
