@@ -28,8 +28,8 @@ Console::Console(Window &window, TTF_Font *font, GameState &game_state)
 
   input_text_rect_.h = command_line_border_rect_.h;
   input_text_rect_.w = command_line_border_rect_.w;
-  input_text_rect_.x = command_line_border_rect_.x;
-  input_text_rect_.y = command_line_border_rect_.y;
+  input_text_rect_.x = command_line_border_rect_.x + 5;
+  input_text_rect_.y = command_line_border_rect_.y - 3;
 
   console_top_bar_text_rect_.x = 0;
   console_top_bar_text_rect_.y = -2;
@@ -81,7 +81,6 @@ SDL_Texture *Console::createText(const std::string& text, TTF_Font* font, SDL_Co
 
 void Console::handleEvent(const SDL_Event &event)
 {
-  //SDL_StartTextInput();
   if (event.type == SDL_KEYDOWN)
   {
     if (event.key.keysym.sym == SDLK_F3)
@@ -96,17 +95,14 @@ void Console::handleEvent(const SDL_Event &event)
     else if (event.key.keysym.sym == SDLK_RETURN)
     {
       // do something here handle commands
-      //input_text_.clear();
+      input_text_.clear();
     }
   }
   else if (event.type == SDL_TEXTINPUT)
   {
-    input_text_ += event.text.text;
-  }
-
-  if (input_text_texture_)
-  {
-    SDL_DestroyTexture(input_text_texture_);
+    std::string char_to_append = event.text.text;
+    input_text_.append(char_to_append);
+    //std::cout << input_text_ << std::endl;
   }
 
   SDL_Color white = {255, 255, 255, 255};
@@ -115,8 +111,10 @@ void Console::handleEvent(const SDL_Event &event)
     input_text_texture_ = createText(input_text_, font_, white, input_text_rect_);
   }
   
-  input_text_rect_.x = command_line_border_rect_.x + 4;
-  input_text_rect_.y = command_line_border_rect_.y + 2;
+  if (input_text_.length() != 0)
+  {
+    input_text_rect_.x = command_line_border_rect_.x + 4;
+  } 
 }
 
 void Console::update(float delta_time)
@@ -126,13 +124,6 @@ void Console::update(float delta_time)
 
 void Console::render()
 {
-  // SDL_ShowCursor(SDL_ENABLE);
-  // SDL_Color black = {0, 0, 0, 255};
-
-  // int mouse_x, mouse_y;
-  // SDL_GetMouseState(&mouse_x, &mouse_y);
-  // SDL_Point mouse_point = {mouse_x, mouse_y};
-
   SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
   SDL_RenderFillRect(renderer_, &console_rect_);
   SDL_RenderDrawRect(renderer_, &console_rect_);
@@ -153,9 +144,5 @@ void Console::render()
   SDL_RenderDrawRect(renderer_, &block_cursor_);  
 
   SDL_RenderCopy(renderer_, texture_console_top_bar_text_, nullptr, &console_top_bar_text_rect_);
-
-  if (input_text_texture_)
-  {
-    SDL_RenderCopy(renderer_, input_text_texture_, nullptr, &input_text_rect_);
-  }
+  SDL_RenderCopy(renderer_, input_text_texture_, nullptr, &input_text_rect_);
 }
