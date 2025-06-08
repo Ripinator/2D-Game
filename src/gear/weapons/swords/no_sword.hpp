@@ -1,29 +1,27 @@
-#ifndef DEFAULT_SWORD_HPP
-#define DEFAULT_SWORD_HPP
+#ifndef NO_SWORD_HPP
+#define NO_SWORD_HPP
 
 #include "gear/weapon.hpp"
 #include "player.hpp"
 
-#define NUM_ATTACKS 8
-
-enum class AnimationStateFramesDefaultSword
+enum class AnimationStateNoSword
 {
   Idle = 0,
-  Walk = 3,
+  Walk = 2,
   Jump = 4,
-  AttackLMB = 14
+  AttackLMB = 8
 };
 
-class DefaultSword : public Weapon
+class NO_SWORD : public Weapon
 {
   private:
-    std::array<SDL_FRect, NUM_ATTACKS> attack_hitboxes_;
-    std::unordered_map<AnimationStateFramesDefaultSword, int> frame_counts_;
-    AnimationStateFramesDefaultSword animation_state_ = AnimationStateFramesDefaultSword::Idle;
+    std::array<SDL_FRect, 1> attack_hitboxes_;
+    std::unordered_map<AnimationStateNoSword, int> frame_counts_;
+    AnimationStateNoSword animation_state_ = AnimationStateNoSword::Idle;
 
   public:
-    DefaultSword(SDL_Renderer *renderer);
-    ~DefaultSword() = default;
+    NO_SWORD(SDL_Renderer *renderer);
+    ~NO_SWORD() = default;
     SDL_FRect getAttackCollisionBox() const override;
     bool get_animation_timer() override;
     void set_animation_timer(float animation_timer) override;
@@ -36,7 +34,7 @@ class DefaultSword : public Weapon
     void render(SDL_RendererFlip flip) override;
     void update(float delta_time) override;
     void animate(float delta_time, std::any AnimationState) override;
-    AnimationStateFramesDefaultSword assignAnimationState(PlayerState animation_state);
+    AnimationStateNoSword assignAnimationState(PlayerState animation_state);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include "gear/weapons/swords/default_sword.hpp"
+#include "gear/weapons/swords/no_sword.hpp"
 
 Player::Player(Window &window) 
   : renderer_(window.getRenderer()),
@@ -12,21 +13,19 @@ Player::Player(Window &window)
     is_jumping_(false),
     frame_width_(64),
     frame_height_(64),
-    current_frame_(0), 
-    animation_timer_(0.0f),
-    animation_speed_(100),
-    // delete is_attacking_
-    is_attacking_(false)
+    animation_speed_(100)
 {
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();
   flip_ = SDL_FLIP_NONE;
-  attack_animation_done_ = true;
 
   collision_box_.x = 64.0f;
   collision_box_.y = 64.0f;
 
   move_x_ = 0.0f;
+
+  // just for trying swapping weapons
+  weapon_switched_ = false;
 
   world_position_.x = 0.0f;
   world_position_.y = screen_height_ - frame_height_ - (screen_height_ / 6);
@@ -51,6 +50,19 @@ void Player::handleInput(const SDL_Event &event)
     {
       velocity_y_ = jump_strength_;
       is_jumping_ = true;
+    }
+    else if (event.key.keysym.sym == SDLK_g)
+    {
+      if (!weapon_switched_)
+      {
+        current_weapon_ = std::make_unique<NO_SWORD>(renderer_);
+        weapon_switched_ = true;
+      }
+      else
+      {
+        current_weapon_ = std::make_unique<DefaultSword>(renderer_);
+        weapon_switched_ = false;
+      }
     }
   }
   else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)

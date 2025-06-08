@@ -48,11 +48,10 @@ class Player
     float gravity_;
     int jump_strength_ = -20;
     bool is_jumping_ = false;
-    // I do this because I want to ensure you can only start another swing(attack) when the previous animation finished
-    bool is_attacking_ = false;
     float camera_x_ = 0.0f;
     float camera_y_ = 0.0f;
     float move_x_; 
+    bool weapon_switched_ = false;
     WeaponState weapon_;
     ArmorState armor_;
     std::unique_ptr<Weapon> current_weapon_;
@@ -65,10 +64,7 @@ class Player
     SDL_Texture *sprite_sheet_;
     int frame_width_;
     int frame_height_;
-    int current_frame_;
-    float animation_timer_;
     int animation_speed_;
-    bool attack_animation_done_;
 
     const std::vector<Tile> *tiles_;
     PlayerState animation_state_ = PlayerState::Idle;
@@ -79,6 +75,7 @@ class Player
 
   public:
     Player(Window &window);
+    // Do not make a destructor here switching weapons will not work if you do!
     void update(float delta_time);
     void render();
     void animate(float delta_time);
@@ -92,7 +89,6 @@ class Player
 
     void equipWeapon(std::unique_ptr<Weapon> weapon);
     Weapon *getWeapon() const;
-    void attack();
     void setTiles(const std::vector<Tile> *tiles);
     SDL_FRect getCollisionBox() const;
     std::array<SDL_FRect, MAX_PLAYER_ATTACKS> getAttackCollisionBox() const;
