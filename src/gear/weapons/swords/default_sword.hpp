@@ -24,10 +24,17 @@ class DefaultSword : public Weapon
   public:
     DefaultSword(SDL_Renderer *renderer);
     SDL_FRect getAttackCollisionBox() const override;
-    void attack() override;
+    bool get_animation_timer() override;
+    void set_animation_timer(float animation_timer) override;
+    bool get_current_frame() override;
+    void set_current_frame(int current_frame) override;
+    bool get_attack_animation_done() override;
+    void set_attack_animation_done(bool attack_animation_done) override;
+    bool get_attacking() override;
+    void set_attacking(bool is_attacking) override;
     void render(SDL_RendererFlip flip) override;
     void update(float delta_time) override;
-    bool animate(float delta_time, std::any AnimationState) override;
+    void animate(float delta_time, std::any AnimationState) override;
     AnimationStateFrames assignAnimationState(PlayerState animation_state);
 };
 

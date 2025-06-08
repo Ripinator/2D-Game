@@ -15,6 +15,7 @@ Player::Player(Window &window)
     current_frame_(0), 
     animation_timer_(0.0f),
     animation_speed_(100),
+    // delete is_attacking_
     is_attacking_(false)
 {
   screen_height_ = window.getScreenHeight();
@@ -54,13 +55,13 @@ void Player::handleInput(const SDL_Event &event)
   }
   else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
   {
-    if (attack_animation_done_)
+    if (current_weapon_->get_attack_animation_done())
     {
-      is_attacking_ = true;
-      attack_animation_done_ = false;
+      current_weapon_->set_attacking(true);
+      current_weapon_->set_attack_animation_done(false);
       animation_state_ = PlayerState::AttackLMB;                             
-      current_frame_ = 0;
-      animation_timer_ = 0.0f;
+      current_weapon_->set_current_frame(0);
+      current_weapon_->set_animation_timer(0.0f);
     }
   }
 }
@@ -72,7 +73,7 @@ void Player::setTiles(const std::vector<Tile> *tiles)
 
 void Player::animate(float delta_time)
 {
-  attack_animation_done_ = current_weapon_->animate(delta_time, animation_state_);
+  current_weapon_->animate(delta_time, animation_state_);
 }
 
 void Player::setPlayerPosition(float position_x, float position_y)
@@ -88,7 +89,7 @@ void Player::update(float delta_time)
 {
   const Uint8* keystate = SDL_GetKeyboardState(NULL);
 
-  if (is_attacking_)
+  if (current_weapon_->get_attacking())
   {
     animation_state_ = PlayerState::AttackLMB;
     velocity_x_ = 0;
@@ -214,7 +215,7 @@ void Player::update(float delta_time)
 
   float attack_offset = 0.0f;
   //The values are based on looking at how far the player swings his sword
-  if (is_attacking_)
+  if (current_weapon_->get_attacking())
   {
     attack_offset = (flip_ == SDL_FLIP_NONE) ? 60.0f : -38.0f;
   }
@@ -224,6 +225,7 @@ void Player::update(float delta_time)
   camera_x_ += (world_position_.x - camera_x_ - screen_width_ / 2.0f) * cam_smooth;
   camera_y_ += (world_position_.y - camera_y_ - screen_height_ / 2.0f) * cam_smooth;
 
+  // Just for debugging purposes until I implement more ingame debugging features
   //std::cout << "Move X: " << move_x_ << " | Pos X: " << world_position_.x << std::endl;
 }
 

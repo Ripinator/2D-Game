@@ -39,12 +39,47 @@ DefaultSword::DefaultSword(SDL_Renderer *renderer)
   attack_hitboxes_[0].h = (frame_height_ / 3) * 2;
 }
 
-void DefaultSword::attack()
+bool DefaultSword::get_current_frame()
 {
- // is_attacking_ = true;
+  return current_frame_;
 }
 
-bool DefaultSword::animate(float delta_time, std::any animation_state_any)
+void DefaultSword::set_current_frame(int current_frame)
+{
+  current_frame_ = current_frame;
+}
+
+bool DefaultSword::get_animation_timer()
+{
+  return animation_time_;
+}
+
+void DefaultSword::set_animation_timer(float animation_time)
+{
+  animation_time_ = animation_time;
+}
+
+bool DefaultSword::get_attack_animation_done()
+{
+  return attack_animation_done_;
+}
+
+void DefaultSword::set_attack_animation_done(bool attack_animation_done)
+{
+  attack_animation_done_ = attack_animation_done;
+}
+
+bool DefaultSword::get_attacking()
+{
+  return is_attacking_;
+}
+
+void DefaultSword::set_attacking(bool is_attacking)
+{
+  is_attacking_ = is_attacking;
+}
+
+void DefaultSword::animate(float delta_time, std::any animation_state_any)
 {
   try
   {
@@ -62,7 +97,7 @@ bool DefaultSword::animate(float delta_time, std::any animation_state_any)
         is_attacking_ = false;
         attack_animation_done_ = true;
         current_frame_ = 0;
-        animation_state_ = AnimationStateFrames::Idle;
+        animation_state = AnimationStateFrames::Idle;
       }
       else
       {
@@ -71,13 +106,10 @@ bool DefaultSword::animate(float delta_time, std::any animation_state_any)
 
       animation_time_ = 0.0f;
     }
-
-    return attack_animation_done_;
   }
   catch(const std::bad_any_cast &e)
   {
     std::cerr << "ERROR: INVALID animation state in default sword" << "Exception: " << e.what() << std::endl;
-    return false;
   }
 }
 

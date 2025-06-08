@@ -1,7 +1,7 @@
 #include "game.hpp"
-#include "start_menu.hpp" 
+#include "menus/start_menu.hpp" 
 #include "game_scene.hpp"
-#include "settings_menu.hpp"
+#include "menus/settings_menu.hpp"
 #include "menus/console.hpp"
 #include <limits.h>
 #include <iostream>
