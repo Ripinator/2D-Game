@@ -78,6 +78,16 @@ void Player::handleInput(const SDL_Event &event)
   }
 }
 
+bool Player::isPlayerAttacking()
+{
+  return current_weapon_->get_attacking();
+}
+
+bool Player::isPlayerAttackDone()
+{
+  return current_weapon_->get_attack_animation_done();
+}
+
 void Player::setTiles(const std::vector<Tile> *tiles)
 {
   tiles_ = tiles;
@@ -185,7 +195,7 @@ void Player::update(float delta_time)
       }
     }
   }
-  
+
   SDL_FRect future_position_y = {
     collision_box_.x,
     collision_box_.y + move_y,

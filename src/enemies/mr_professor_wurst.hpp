@@ -39,7 +39,7 @@ class MrProfessorWurst : public Enemy
   public:
     MrProfessorWurst(Window &window, int x, int y, const SDL_Rect &floor_rect);
 
-    void update(const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attacks_hitboxes, float delta_time) override;
+    void update(Player &player, const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attacks_hitboxes, float delta_time) override;
     void render() override;
     SDL_FRect getCollisionBox() override
     {

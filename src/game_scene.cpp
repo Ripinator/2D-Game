@@ -77,15 +77,13 @@ void GameScene::render()
   player_box.x -= player_.getCameraOffsetX();
   player_box.y -= player_.getCameraOffsetY();
   SDL_RenderDrawRectF(renderer_, &player_box);
-  player_.render();  
- 
 
-  SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255); // Red
   std::array<SDL_FRect, MAX_PLAYER_ATTACKS> player_attackrange_box = player_.getAttackCollisionBox();
   player_attackrange_box[0].x -= player_.getCameraOffsetX();
   player_attackrange_box[0].y -= player_.getCameraOffsetY();
   SDL_RenderDrawRectF(renderer_, &player_attackrange_box[0]);
-  player_.render(); 
+
+  player_.render();
 }
 
 void GameScene::handleEvent(const SDL_Event& event) 
@@ -104,8 +102,18 @@ void GameScene::update(float delta_time)
 {
   player_.update(delta_time);
 
-  for (auto& enemy : level_data_.enemies)
+  auto& enemies = level_data_.enemies;
+  auto it = enemies.begin();
+  while (it != enemies.end())
   {
-    enemy->update(player_.getCollisionBox(), player_.getAttackCollisionBox(), delta_time);
+    (*it)->update(player_, player_.getCollisionBox(), player_.getAttackCollisionBox(), delta_time);
+    if ((*it)->isDeadAndGone())
+    {
+      it = enemies.erase(it);
+    }
+    else
+    {
+      ++it;
+    }
   }
 }

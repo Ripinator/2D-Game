@@ -1,4 +1,5 @@
 #include "mr_professor_wurst.hpp"
+#include "player.hpp"
 
 MrProfessorWurst::MrProfessorWurst(Window &window, int x, int y, const SDL_Rect &floor_rect)
 : Enemy(window, floor_rect)
@@ -16,6 +17,8 @@ MrProfessorWurst::MrProfessorWurst(Window &window, int x, int y, const SDL_Rect 
   animation_speed_ = 25;
   animation_timer_ = 0;
   flip_ = SDL_FLIP_NONE;
+  attack_done_ = false;
+  is_dead_and_gone_ = false;
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
@@ -56,7 +59,7 @@ void MrProfessorWurst::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void MrProfessorWurst::update(const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attacks_hitboxes, float delta_time)
+void MrProfessorWurst::update(Player &player, const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attacks_hitboxes, float delta_time)
 {
   if (is_attacking_)
   {

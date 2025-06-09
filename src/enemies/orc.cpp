@@ -1,4 +1,5 @@
 #include "orc.hpp"
+#include "player.hpp"
 
 Orc::Orc(Window &window, int x, int y, const SDL_Rect &floor_rect)
 : Enemy(window, floor_rect)
@@ -20,6 +21,8 @@ Orc::Orc(Window &window, int x, int y, const SDL_Rect &floor_rect)
   move_x_ = 0.0f;
   move_y_ = 0.0f;
   health_ = 3;
+  attack_done_ = false;
+  is_dead_and_gone_ = false;
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
@@ -80,7 +83,7 @@ void Orc::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void Orc::update(const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attack_hitboxes, float delta_time)
+void Orc::update(Player &player, const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attack_hitboxes, float delta_time)
 {
   const int detection_range = 200;
   int distance_to_player = player_box.x - collision_box_.x;

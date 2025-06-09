@@ -81,6 +81,8 @@ class Player
     void animate(float delta_time);
     void handleInput(const SDL_Event &event);
     void setPlayerPosition(float position_x, float position_y);
+    bool isPlayerAttacking();
+    bool isPlayerAttackDone();
     
     SDL_FPoint getPlayerPosition() const 
     {

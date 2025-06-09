@@ -1,4 +1,5 @@
 #include "night_borne.hpp"
+#include "player.hpp"
 
 NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
 : Enemy(window, floor_rect)
@@ -7,7 +8,6 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   frame_height_ = 64;
   velocity_x_ = 0;
   velocity_y_ = 0;
-  health_ = 200;
   damage_ = 15;
   speed_ = 1;
   sprite_surface_ = IMG_Load("assets/enemies/NightBorne.png");
@@ -20,6 +20,8 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   move_x_ = 0.0f;
   move_y_ = 0.0f;
   health_ = 5;
+  attack_done_ = true;
+  is_dead_and_gone_ = false;
 
   sprite_ = SDL_CreateTextureFromSurface(renderer_, sprite_surface_);
   SDL_FreeSurface(sprite_surface_);
@@ -74,8 +76,21 @@ void NightBorne::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void NightBorne::update(const SDL_FRect &player_box, const std::array<SDL_FRect, 100> &player_attacks_hitboxes, float delta_time)
+void NightBorne::update(Player &player, const SDL_FRect &player_box, const std::array<SDL_FRect, 100> &player_attacks_hitboxes, float delta_time)
 {
+  if (health_ <= 0)
+  {
+    animation_state_ = EnemyState::IsDead;
+  }
+
+  if (animation_state_ == EnemyState::IsDead)
+  {
+    if (current_frame_ >= frame_counts_[EnemyState::IsDead] - 1)
+    {
+      is_dead_and_gone_ = true;
+    }
+  }
+
   const int detection_range = 200;
   int distance_to_player = player_box.x - collision_box_.x;
 
@@ -161,6 +176,20 @@ void NightBorne::update(const SDL_FRect &player_box, const std::array<SDL_FRect,
     }
   }
 
+  if (player.isPlayerAttacking() && attack_done_)
+  {
+    attack_done_ = false;
+    if (SDL_HasIntersectionF(&future_position_x, &player_attacks_hitboxes[0]))
+    {
+      health_--;
+    }
+  }
+
+  if (player.isPlayerAttackDone())
+  {
+    attack_done_ = true;
+  }
+
   collision_box_.y = future_position_y.y;
 
   health_bar_.x = collision_box_.x;
@@ -186,8 +215,7 @@ void NightBorne::render()
   dest_rect.w = frame_width_* 3;
   dest_rect.h = frame_height_ * 3;
 
-  // there are some seemingly random hardcoded values in here because the spritesheet is weird and iam to lazy to change the sheet itself
-  // also maybe a switch statement is not the optimale solution but i dont care
+  // there are some seemingly random hardcoded values in here because the spritesheet is weird
   switch (animation_state_)
   {
     case EnemyState::Idle:

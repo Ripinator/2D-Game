@@ -41,7 +41,7 @@ class Orc : public Enemy
       Orc(Window &window, int x, int y, const SDL_Rect &floor_rect);
       ~Orc();
 
-      void update(const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attack_hitboxes, float delta_time) override;
+      void update(Player &player, const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attack_hitboxes, float delta_time) override;
       void render() override;
       SDL_FRect getCollisionBox() override
       {
