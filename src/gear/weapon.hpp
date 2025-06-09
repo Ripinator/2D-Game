@@ -32,6 +32,7 @@ class Weapon
     SDL_Rect src_rect_;
     SDL_FRect dest_rect_;
     SDL_FRect collision_box_;
+    //std::array<SDL_FRect, 100> attack_collision_boxes_;
     WeaponType weapon_type_;
     bool attack_animation_done_;
     float attack_timer_;
@@ -66,7 +67,7 @@ class Weapon
     virtual void update(float delta_time) = 0;
     virtual void render(SDL_RendererFlip flip) = 0;
     virtual void animate(float delta_time, std::any animation_state) = 0;
-    virtual SDL_FRect getAttackCollisionBox() const = 0;
+    virtual std::array<SDL_FRect, 100> getAttackCollisionBox() const = 0;
 };
 
 #endif

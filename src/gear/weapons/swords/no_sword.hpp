@@ -15,14 +15,14 @@ enum class AnimationStateNoSword
 class NO_SWORD : public Weapon
 {
   private:
-    std::array<SDL_FRect, 1> attack_hitboxes_;
+    std::array<SDL_FRect, 100> attack_hitboxes_;
     std::unordered_map<AnimationStateNoSword, int> frame_counts_;
     AnimationStateNoSword animation_state_ = AnimationStateNoSword::Idle;
 
   public:
     NO_SWORD(SDL_Renderer *renderer);
     ~NO_SWORD() = default;
-    SDL_FRect getAttackCollisionBox() const override;
+    std::array<SDL_FRect, 100> getAttackCollisionBox() const override;
     bool get_animation_timer() override;
     void set_animation_timer(float animation_timer) override;
     bool get_current_frame() override;

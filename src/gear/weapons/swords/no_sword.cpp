@@ -146,9 +146,9 @@ AnimationStateNoSword NO_SWORD::assignAnimationState(PlayerState animation_state
 void NO_SWORD::update(float delta_time)
 {}
 
-SDL_FRect NO_SWORD::getAttackCollisionBox() const
+std::array<SDL_FRect, 100> NO_SWORD::getAttackCollisionBox() const
 {
-  return collision_box_;
+  return attack_hitboxes_;
 }
 
 void NO_SWORD::render(SDL_RendererFlip flip)

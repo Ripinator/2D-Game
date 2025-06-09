@@ -17,14 +17,14 @@ enum class AnimationStateFramesDefaultSword
 class DefaultSword : public Weapon
 {
   private:
-    std::array<SDL_FRect, NUM_ATTACKS> attack_hitboxes_;
+    std::array<SDL_FRect, 100> attack_hitboxes_;
     std::unordered_map<AnimationStateFramesDefaultSword, int> frame_counts_;
     AnimationStateFramesDefaultSword animation_state_ = AnimationStateFramesDefaultSword::Idle;
 
   public:
     DefaultSword(SDL_Renderer *renderer);
     ~DefaultSword() = default;
-    SDL_FRect getAttackCollisionBox() const override;
+    std::array<SDL_FRect, 100> getAttackCollisionBox() const override;
     bool get_animation_timer() override;
     void set_animation_timer(float animation_timer) override;
     bool get_current_frame() override;

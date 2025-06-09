@@ -239,6 +239,8 @@ void Player::update(float delta_time)
 
   // Just for debugging purposes until I implement more ingame debugging features
   //std::cout << "Move X: " << move_x_ << " | Pos X: " << world_position_.x << std::endl;
+  attack_collision_boxes_[0].x = world_position_.x + attack_offset;
+  attack_collision_boxes_[0].y = world_position_.y;
 }
 
 SDL_FRect Player::getCollisionBox() const 
@@ -248,7 +250,11 @@ SDL_FRect Player::getCollisionBox() const
 
 std::array<SDL_FRect, MAX_PLAYER_ATTACKS> Player::getAttackCollisionBox() const
 {
-  return attack_collision_boxes_; 
+  std::array<SDL_FRect, MAX_PLAYER_ATTACKS> current_attack;
+  current_attack = current_weapon_->getAttackCollisionBox();
+  current_attack[0].x = attack_collision_boxes_[0].x;
+  current_attack[0].y = attack_collision_boxes_[0].y;
+  return current_attack; 
 }
 
 void Player::render()

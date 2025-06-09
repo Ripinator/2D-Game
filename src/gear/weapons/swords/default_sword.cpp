@@ -146,9 +146,9 @@ AnimationStateFramesDefaultSword DefaultSword::assignAnimationState(PlayerState 
 void DefaultSword::update(float delta_time)
 {}
 
-SDL_FRect DefaultSword::getAttackCollisionBox() const
+std::array<SDL_FRect, 100> DefaultSword::getAttackCollisionBox() const
 {
-  return collision_box_;
+  return attack_hitboxes_;
 }
 
 void DefaultSword::render(SDL_RendererFlip flip)
