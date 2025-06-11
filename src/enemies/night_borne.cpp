@@ -38,13 +38,15 @@ NightBorne::NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect)
   
   health_bar_.x = x;
   health_bar_.y = y;
-  health_bar_.w = 54;
-  health_bar_.h = 8;
+  health_bar_.w = 54.0f;
+  health_bar_.h = 8.0f;
 
   health_bar_border_.x = x;
   health_bar_border_.y = y;
   health_bar_border_.w = 56;
   health_bar_border_.h = 10;
+
+  health_bar_full_size_ = health_bar_.w;
 
   frame_counts_[EnemyState::Idle] = 9;
   frame_counts_[EnemyState::Walking] = 6;
@@ -182,6 +184,8 @@ void NightBorne::update(Player &player, const SDL_FRect &player_box, const std::
     if (SDL_HasIntersectionF(&future_position_x, &player_attacks_hitboxes[0]))
     {
       health_--;
+      // I do this so that the health bar can less wide than 0
+      health_bar_.w = std::max(0.0f, health_bar_.w - health_bar_full_size_ / 5);
     }
   }
 

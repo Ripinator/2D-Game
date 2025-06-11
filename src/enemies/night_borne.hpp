@@ -39,6 +39,7 @@ class NightBorne : public Enemy
     float wait;
     const float enemy_speed_ = 150.0f;
     EnemyState animation_state_ = EnemyState::Idle;
+    float health_bar_full_size_;
 
   public:
     NightBorne(Window &window, int x, int y, const SDL_Rect &floor_rect);

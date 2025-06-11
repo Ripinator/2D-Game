@@ -17,7 +17,15 @@ void gameLoop(Window &window)
   bool console_created = false;
 
   std::unique_ptr<Console> console_overlay;
-  std::unique_ptr<Scene> currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
+  Scene* currentScene = nullptr;
+
+  std::unique_ptr<StartMenu> start_menu;
+  std::unique_ptr<GameScene> game_scene;
+  std::unique_ptr<SettingsMenu> settings_menu;
+
+  // Initialize start_menu and set currentScene to it
+  start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
+  currentScene = start_menu.get();
 
   bool running = true;
   SDL_Event event;
@@ -66,14 +74,21 @@ void gameLoop(Window &window)
 
     if (state != previousState)
     {
-      // i only switch into the play state if the state is play and iam currently in the startmenu
       if (state == GameState::Play)
       {
-        currentScene = std::make_unique<GameScene>(window, state);
+        if (!game_scene)
+        {
+          game_scene = std::make_unique<GameScene>(window, state);
+        }
+        currentScene = game_scene.get();
       }
       else if (state == GameState::Settings)
       {
-        currentScene = std::make_unique<SettingsMenu>(window, headerFont, bodyFont, state);
+        if (!settings_menu)
+        {
+          settings_menu = std::make_unique<SettingsMenu>(window, headerFont, bodyFont, state);
+        }
+        currentScene = settings_menu.get();
       }
       else if (state == GameState::Quit)
       {
@@ -81,7 +96,11 @@ void gameLoop(Window &window)
       }
       else if (state == GameState::Menu)
       {
-        currentScene = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
+        if (!start_menu)
+        {
+          start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
+        }
+        currentScene = start_menu.get();
       }
       else if (state == GameState::Console && console_created == false)
       {
