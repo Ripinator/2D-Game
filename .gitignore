@@ -1,2 +1,4 @@
 # Ignore licensed assets
 assets/
+build/
+.vscode/
