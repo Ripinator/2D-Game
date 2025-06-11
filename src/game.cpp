@@ -121,8 +121,6 @@ void gameLoop(Window &window)
       }
     }
 
-    
-    
     Uint64 frame_end_time = SDL_GetPerformanceCounter();
     float frame_time = static_cast<float>(frame_end_time - now) / SDL_GetPerformanceFrequency();
     if (frame_time < frameDelay)

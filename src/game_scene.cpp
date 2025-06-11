@@ -100,7 +100,7 @@ void GameScene::handleEvent(const SDL_Event& event)
 
 void GameScene::update(float delta_time) 
 {
-  player_.update(delta_time);
+  player_.update(delta_time); 
 
   auto& enemies = level_data_.enemies;
   auto it = enemies.begin();
