@@ -42,6 +42,8 @@ Orc::Orc(Window &window, int x, int y, const SDL_Rect &floor_rect)
   health_bar_.w = 54;
   health_bar_.h = 8;
 
+  health_bar_full_size_ = health_bar_.w;
+
   health_bar_border_.x = x;
   health_bar_border_.y = y;
   health_bar_border_.w = 56;
@@ -83,25 +85,42 @@ void Orc::setEnemyPosition(int position_x, int position_y)
   collision_box_.y = position_y;
 }
 
-void Orc::update(Player &player, const SDL_FRect &player_box, const std::array<SDL_FRect, MAX_PLAYER_ATTACKS> &player_attack_hitboxes, float delta_time)
+void Orc::update(Player &player, const SDL_FRect &player_box, const std::array<SDL_FRect, 100> &player_attack_hitboxes, float delta_time)
 {
+
+  if (health_ <= 0)
+  {
+    animation_state_ = OrcEnemyState::isDead;
+  }
+
+  if (animation_state_ == OrcEnemyState::isDead)
+  {
+    if (current_frame_ >= frame_counts_[OrcEnemyState::isDead] - 1)
+    {
+      is_dead_and_gone_ = true;
+    }
+  }
+
   const int detection_range = 200;
   int distance_to_player = player_box.x - collision_box_.x;
 
-  if (std::abs(distance_to_player) < detection_range)
+  if (animation_state_ != OrcEnemyState::isDead)
   {
-    animation_state_ = OrcEnemyState::Idle;
-    velocity_x_ = 0;
-
-    flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    if (std::abs(distance_to_player) < detection_range)
+    {
+      animation_state_ = OrcEnemyState::Idle;
+      velocity_x_ = 0;
+  
+      flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    }
+    else
+    {
+      animation_state_ = OrcEnemyState::Walking;
+      velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
+      move_x_ = velocity_x_ * delta_time;
+    }
   }
-  else
-  {
-    animation_state_ = OrcEnemyState::Walking;
-    velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
-    move_x_ = velocity_x_ * delta_time;
-  }
-
+ 
   animate(delta_time);
 
   //  Horizontal movement
@@ -170,6 +189,22 @@ void Orc::update(Player &player, const SDL_FRect &player_box, const std::array<S
         move_y_ = 0;
       }
     }
+  }
+
+  if (player.isPlayerAttacking() && attack_done_)
+  {
+    attack_done_ = false;
+    if (SDL_HasIntersectionF(&future_position_x, &player_attack_hitboxes[0]))
+    {
+      health_--;
+      // I do this so that the health bar can less wide than 0
+      health_bar_.w = std::max(0.0f, health_bar_.w - health_bar_full_size_ / 5);
+    }
+  }
+
+  if (player.isPlayerAttackDone())
+  {
+    attack_done_ = true;
   }
 
   collision_box_.y = future_position_y.y;

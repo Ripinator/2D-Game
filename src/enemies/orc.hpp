@@ -34,6 +34,7 @@ class Orc : public Enemy
     float move_x_;
     float move_y_;
     float wait;
+    float health_bar_full_size_;
     OrcEnemyState animation_state_ = OrcEnemyState::Idle;
 
 

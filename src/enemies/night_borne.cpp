@@ -96,19 +96,22 @@ void NightBorne::update(Player &player, const SDL_FRect &player_box, const std::
   const int detection_range = 200;
   int distance_to_player = player_box.x - collision_box_.x;
 
-  // if (std::abs(distance_to_player) < detection_range)
-  // {
-  //   animation_state_ = EnemyState::Idle;
-  //   velocity_x_ = 0;
+  if (animation_state_ != EnemyState::IsDead)
+  {
+    if (std::abs(distance_to_player) < detection_range)
+    {
+      animation_state_ = EnemyState::Idle;
+      velocity_x_ = 0;
 
-  //   flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-  // }
-  // else
-  // {
-  //   animation_state_ = EnemyState::Walking;
-  //   velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
-  //   move_x_ = velocity_x_ * delta_time;
-  // }
+      flip_ = (distance_to_player < 0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    }
+    else
+    {
+      animation_state_ = EnemyState::Walking;
+      velocity_x_ = (distance_to_player > 0) ? enemy_speed_ : -enemy_speed_;
+      move_x_ = velocity_x_ * delta_time;
+    }
+  }
 
   animate(delta_time);
 

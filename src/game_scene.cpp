@@ -63,11 +63,11 @@ void GameScene::render()
 
     // Debugging rect: this draws the hitbox
 
-    // SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
-    // SDL_FRect enemy_box = enemy->getCollisionBox();
-    // enemy_box.x -= camera_x;
-    // enemy_box.y -= camera_y;
-    // SDL_RenderDrawRectF(renderer_, &enemy_box);
+    SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
+    SDL_FRect enemy_box = enemy->getCollisionBox();
+    enemy_box.x -= camera_x;
+    enemy_box.y -= camera_y;
+    SDL_RenderDrawRectF(renderer_, &enemy_box);
   }
 
   // More hitbox rects
