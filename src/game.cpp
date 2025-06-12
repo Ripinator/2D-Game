@@ -29,7 +29,7 @@ void gameLoop(Window &window)
 
   bool running = true;
   SDL_Event event;
-  const float frameDelay = 1.0f / 250.0f;
+  constexpr float frameDelay = 1.0f / 250.0f;
   Uint64 last_frame_time = SDL_GetPerformanceCounter();
   
   while (running)
