@@ -188,13 +188,13 @@ void StartMenu::render()
 
   text_start_rect_.x = start_rect_.x + (start_rect_.w - text_start_rect_.w) / 2;
   text_start_rect_.y = start_rect_.y + (start_rect_.h - text_start_rect_.h) / 2;
-  drawButton(start_rect_, text_texture_start_, text_start_rect_, hovered_start, event);
+  drawButton(start_rect_, text_texture_start_, text_start_rect_, hovered_start, event_);
 
   text_quit_rect_.x = quit_rect_.x + (quit_rect_.w - text_quit_rect_.w) / 2;
   text_quit_rect_.y = quit_rect_.y + (quit_rect_.h - text_quit_rect_.h) / 2;
-  drawButton(quit_rect_, text_texture_quit_, text_quit_rect_, hovered_quit, event);
+  drawButton(quit_rect_, text_texture_quit_, text_quit_rect_, hovered_quit, event_);
 
   text_settings_rect_.x = settings_menu_rect_.x + (settings_menu_rect_.w - text_settings_rect_.w) / 2;
   text_settings_rect_.y = settings_menu_rect_.y + (settings_menu_rect_.h - text_settings_rect_.h) / 2;
-  drawButton(settings_menu_rect_, text_texture_settings_, text_settings_rect_, hovered_settings, event);
+  drawButton(settings_menu_rect_, text_texture_settings_, text_settings_rect_, hovered_settings, event_);
 }

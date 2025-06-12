@@ -3,11 +3,6 @@
 // Source: https://stackoverflow.com/questions/61047811/game-inventory-system
 // Answered by: Kerek on stackoverflow
 
-// void Inventory::addItem(Item &item)
-// {
-
-// }
-
 std::vector<size_t> Inventory::find_indexes_of(const Item& item) const
 {
   std::vector<size_t> indexes{};

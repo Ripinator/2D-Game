@@ -1,6 +1,6 @@
 #ifndef INVENTORY_HPP
 #define INVENTORY_HPP
-#include <item.hpp>
+#include <inventory-system/item.hpp>
 #include <vector>
 
 enum class OccupantType

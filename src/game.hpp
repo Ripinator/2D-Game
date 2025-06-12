@@ -17,7 +17,8 @@ enum class GameState
   Quit = 5,
   Console = 6,
   QuitConsole = 7,
-  None = 8
+  Inventory = 8,
+  None = 9
 };
 
 void gameLoop(Window &window); 

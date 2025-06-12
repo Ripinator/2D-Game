@@ -4,7 +4,7 @@
 #include <array>
 
 GameScene::GameScene(Window &window, GameState &game_state)
-: renderer_(window.getRenderer()), game_state_(game_state), player_(window)
+: renderer_(window.getRenderer()), game_state_(game_state), player_(window, game_state_)
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();

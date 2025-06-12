@@ -22,7 +22,7 @@ class StartMenu : public Scene
     TTF_Font *header_font_;
     TTF_Font *font_;
     GameState &game_state_;
-    SDL_Event event;
+    SDL_Event event_;
     SDL_Texture *text_texture_header_;
     SDL_Texture *text_texture_start_;
     SDL_Texture *text_texture_quit_;

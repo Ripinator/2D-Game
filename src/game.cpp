@@ -3,6 +3,7 @@
 #include "game_scene.hpp"
 #include "menus/settings_menu.hpp"
 #include "menus/console.hpp"
+#include "menus/inventory_menu.hpp"
 #include <limits.h>
 #include <iostream>
 #include <memory>
@@ -22,6 +23,7 @@ void gameLoop(Window &window)
   std::unique_ptr<StartMenu> start_menu;
   std::unique_ptr<GameScene> game_scene;
   std::unique_ptr<SettingsMenu> settings_menu;
+  std::unique_ptr<InventoryMenu> inventory_menu;
 
   // Initialize start_menu and set currentScene to it
   start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
@@ -29,13 +31,13 @@ void gameLoop(Window &window)
 
   bool running = true;
   SDL_Event event;
-  constexpr float frameDelay = 1.0f / 250.0f;
+  float frameDelay = 1.0f / 250.0f;
   Uint64 last_frame_time = SDL_GetPerformanceCounter();
   
   while (running)
   {
     Uint64 now = SDL_GetPerformanceCounter();
-    float delta_time = static_cast<float>(now - last_frame_time) / SDL_GetPerformanceFrequency();
+    const float delta_time = static_cast<float>(now - last_frame_time) / SDL_GetPerformanceFrequency();
     last_frame_time = now;
     
     while (SDL_PollEvent(&event)) 
@@ -101,6 +103,14 @@ void gameLoop(Window &window)
           start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
         }
         currentScene = start_menu.get();
+      }
+      else if (state == GameState::Inventory)
+      {
+        if (!inventory_menu)
+        {
+          inventory_menu = std::make_unique<InventoryMenu>(window, bodyFont, state);
+        }
+        currentScene = inventory_menu.get();
       }
       else if (state == GameState::Console && console_created == false)
       {

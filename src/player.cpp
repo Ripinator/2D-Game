@@ -4,7 +4,7 @@
 #include "gear/weapons/swords/default_sword.hpp"
 #include "gear/weapons/swords/no_sword.hpp"
 
-Player::Player(Window &window) 
+Player::Player(Window &window, GameState &game_state) 
   : renderer_(window.getRenderer()),
     velocity_x_(0),
     velocity_y_(0),
@@ -13,7 +13,8 @@ Player::Player(Window &window)
     is_jumping_(false),
     frame_width_(64),
     frame_height_(64),
-    animation_speed_(100)
+    animation_speed_(100),
+    game_state_(game_state)
 {
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();
@@ -63,6 +64,10 @@ void Player::handleInput(const SDL_Event &event)
         current_weapon_ = std::make_unique<DefaultSword>(renderer_);
         weapon_switched_ = false;
       }
+    }
+    else if (event.key.keysym.sym == SDLK_i)
+    {
+      game_state_ = GameState::Inventory;
     }
   }
   else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
