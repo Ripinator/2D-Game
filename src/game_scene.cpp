@@ -3,8 +3,8 @@
 #include "game.hpp"
 #include <array>
 
-GameScene::GameScene(Window &window, GameState &game_state)
-: renderer_(window.getRenderer()), game_state_(game_state), player_(window, game_state_)
+GameScene::GameScene(Window &window, GameState &game_state, OverlayState &overlay_state)
+: renderer_(window.getRenderer()), game_state_(game_state), player_(window, game_state_, overlay_state_), overlay_state_(overlay_state)
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();

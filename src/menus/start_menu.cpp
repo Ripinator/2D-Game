@@ -5,8 +5,8 @@
 #include "utils/utils.hpp"
 // iam so sorry this file is filled with horrible code
 
-StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state) 
-: renderer_(window.getRenderer()), header_font_(header_font), font_(font), game_state_(game_state)
+StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state, OverlayState &overlay_state) 
+: renderer_(window.getRenderer()), header_font_(header_font), font_(font), game_state_(game_state), overlay_state_(overlay_state)
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();
@@ -120,7 +120,8 @@ void StartMenu::handleEvent(const SDL_Event &event)
   else if (event.key.keysym.sym == SDLK_F2)
   {
     SDL_StartTextInput();
-    setType(GameState::Console);
+    setType(GameState::OverlayActive);
+    overlay_state_ = OverlayState::Console;
   }
 }
 

@@ -15,10 +15,17 @@ enum class GameState
   Pause = 3,
   Settings = 4,
   Quit = 5,
-  Console = 6,
-  QuitConsole = 7,
-  Inventory = 8,
-  None = 9
+  OverlayActive = 6,
+  OverlayInactive = 7,
+  None = 8
+};
+
+enum class OverlayState
+{
+  Inventory = 0,
+  Console = 1,
+  QuitConsole = 2,
+  None = 3
 };
 
 void gameLoop(Window &window); 

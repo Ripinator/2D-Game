@@ -22,6 +22,7 @@ class GameScene : public Scene
     int screen_height_;
     SDL_Renderer *renderer_;
     GameState &game_state_;
+    OverlayState &overlay_state_;
     SDL_Rect background_rect_;
     Player player_;
     LevelData level_data_;
@@ -32,7 +33,7 @@ class GameScene : public Scene
     SDL_Texture* background_layer_4_texture_;
 
   public:
-    GameScene(Window &window, GameState &game_state);
+    GameScene(Window &window, GameState &game_state, OverlayState &overlay_state);
     void render() override;
     void update(float delta_time) override;
     void handleEvent(const SDL_Event& event) override;

@@ -1,7 +1,7 @@
 #include "menus/console.hpp"
 
-Console::Console(Window &window, TTF_Font *font, GameState &game_state)
-  : renderer_(window.getRenderer()), font_(font), window_(window), game_state_(game_state)
+Console::Console(Window &window, TTF_Font *font, OverlayState &overlay_state,GameState &game_state)
+  : renderer_(window.getRenderer()), font_(font), window_(window), overlay_state_(overlay_state), game_state_(game_state)
 {
   width_ = (window.getScreenWidth() / 3) * 2;
   height_ = (window.getScreenHeight() / 3) * 2;
@@ -86,7 +86,7 @@ void Console::handleEvent(const SDL_Event &event)
     if (event.key.keysym.sym == SDLK_F3)
     {
       SDL_StopTextInput();
-      game_state_ = GameState::QuitConsole;
+      game_state_ = GameState::OverlayInactive;
     }
     else if (event.key.keysym.sym == SDLK_BACKSPACE && !input_text_.empty())
     {

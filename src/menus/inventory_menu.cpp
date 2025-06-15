@@ -1,7 +1,7 @@
 #include "inventory_menu.hpp"
 
-InventoryMenu::InventoryMenu(Window &window, TTF_Font *font, GameState &game_state)
-: renderer_(window.getRenderer()), font_(font), game_state_(game_state)
+InventoryMenu::InventoryMenu(Window &window, TTF_Font *font, OverlayState &overlay_state, GameState &game_state)
+: renderer_(window.getRenderer()), font_(font), overlay_state_(overlay_state), game_state_(game_state) 
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();
@@ -39,7 +39,7 @@ void InventoryMenu::handleEvent(const SDL_Event &event)
   {
     if (event.key.keysym.sym == SDLK_i)
     {
-      game_state_ = GameState::Play;
+      overlay_state_ = OverlayState::None;
     }
   }
 }

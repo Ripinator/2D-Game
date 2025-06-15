@@ -22,6 +22,7 @@ class StartMenu : public Scene
     TTF_Font *header_font_;
     TTF_Font *font_;
     GameState &game_state_;
+    OverlayState &overlay_state_;
     SDL_Event event_;
     SDL_Texture *text_texture_header_;
     SDL_Texture *text_texture_start_;
@@ -38,7 +39,7 @@ class StartMenu : public Scene
     int screen_height_;
 
   public:
-    StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state);
+    StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state, OverlayState &overlay_state);
     ~StartMenu();
     void handleEvent(const SDL_Event &event) override;
     void update(float delta_time) override;

@@ -14,32 +14,34 @@ void gameLoop(Window &window)
   TTF_Font* headerFont = TTF_OpenFont("assets/fonts/MedievalSharp-Regular.ttf", 48);
   TTF_Font* bodyFont = TTF_OpenFont("assets/fonts/CinzelDecorative-Bold.ttf", 24);
   GameState state = GameState::Menu;
+  OverlayState overlay_state = OverlayState::None;
   GameState previousState = GameState::None;
   bool console_created = false;
 
-  std::unique_ptr<Console> console_overlay;
   Scene* currentScene = nullptr;
+  Overlay* currentOverlay = nullptr;
 
   std::unique_ptr<StartMenu> start_menu;
   std::unique_ptr<GameScene> game_scene;
   std::unique_ptr<SettingsMenu> settings_menu;
   std::unique_ptr<InventoryMenu> inventory_menu;
+  std::unique_ptr<Console> console_overlay;
 
   // Initialize start_menu and set currentScene to it
-  start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
+  start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state, overlay_state);
   currentScene = start_menu.get();
 
   bool running = true;
   SDL_Event event;
   float frameDelay = 1.0f / 250.0f;
   Uint64 last_frame_time = SDL_GetPerformanceCounter();
-  
+
   while (running)
   {
     Uint64 now = SDL_GetPerformanceCounter();
     const float delta_time = static_cast<float>(now - last_frame_time) / SDL_GetPerformanceFrequency();
     last_frame_time = now;
-    
+
     while (SDL_PollEvent(&event)) 
     {
       if (event.type == SDL_QUIT)
@@ -47,30 +49,45 @@ void gameLoop(Window &window)
         running = false;
       }
 
-      if (console_overlay && state == GameState::Console)
+      // if (console_overlay && state == GameState::Console)
+      // {
+      //   console_overlay->handleEvent(event);
+      // }
+
+      if (currentOverlay && state == GameState::OverlayActive)
       {
-        console_overlay->handleEvent(event);
+        currentOverlay->handleEvent(event);
       }
       else if (currentScene)
       {
         currentScene->handleEvent(event);
       }
     }
-    
+
     currentScene->update(delta_time);
-    if (console_overlay && state == GameState::Console)
+    if (currentOverlay && state == GameState::OverlayActive)
     {
-      console_overlay->update(delta_time);
+      currentOverlay->update(delta_time);
     }
+    
+    // if (console_overlay && state == GameState::Console)
+    // {
+    //   console_overlay->update(delta_time);
+    // }
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     currentScene->render();
 
-    if (console_overlay && state == GameState::Console)
+    if (currentOverlay && state == GameState::OverlayActive)
     {
-      console_overlay->render();
+      currentOverlay->render();
     }
+    
+    // if (console_overlay && state == GameState::Console)
+    // {
+    //   console_overlay->render();
+    // }
 
     SDL_RenderPresent(renderer);
 
@@ -80,7 +97,7 @@ void gameLoop(Window &window)
       {
         if (!game_scene)
         {
-          game_scene = std::make_unique<GameScene>(window, state);
+          game_scene = std::make_unique<GameScene>(window, state, overlay_state);
         }
         currentScene = game_scene.get();
       }
@@ -100,34 +117,47 @@ void gameLoop(Window &window)
       {
         if (!start_menu)
         {
-          start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state);
+          start_menu = std::make_unique<StartMenu>(window, headerFont, bodyFont, state, overlay_state);
         }
         currentScene = start_menu.get();
       }
-      else if (state == GameState::Inventory)
+      state = previousState; 
+      // else if (state == GameState::Console && console_created == false)
+      // {
+      //   console_created = true;
+      //   previousState = previousState != GameState::Console ? previousState : state;
+      //   console_overlay = std::make_unique<Console>(window, bodyFont, state);
+      // }
+      // else if (state == GameState::QuitConsole)
+      // {
+      //   
+      //   console_overlay.reset();
+      //   continue;
+      // }
+
+      // if (state != GameState::QuitConsole && state != GameState::Console)
+      // {
+      //   previousState = state;
+      // }
+    }
+
+    if (overlay_state != OverlayState::None && state != GameState::OverlayInactive)
+    {
+      if (state == GameState::Play && overlay_state == OverlayState::Inventory)
       {
-        if (!inventory_menu)
+        if (!inventory_menu) 
         {
-          inventory_menu = std::make_unique<InventoryMenu>(window, bodyFont, state);
+          inventory_menu = std::make_unique<InventoryMenu>(window, bodyFont, overlay_state, state);
         }
-        currentScene = inventory_menu.get();
-      }
-      else if (state == GameState::Console && console_created == false)
-      {
-        console_created = true;
-        previousState = previousState != GameState::Console ? previousState : state;
-        console_overlay = std::make_unique<Console>(window, bodyFont, state);
-      }
-      else if (state == GameState::QuitConsole)
-      {
-        state = previousState; 
-        console_overlay.reset();
-        continue;
+        currentOverlay = inventory_menu.get();
       }
 
-      if (state != GameState::QuitConsole && state != GameState::Console)
+      if (overlay_state == OverlayState::Console)
       {
-        previousState = state;
+        if (!console_overlay)
+        {
+          console_overlay = std::make_unique<Console>(window, bodyFont, overlay_state ,state);
+        }
       }
     }
 

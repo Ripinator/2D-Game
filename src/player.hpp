@@ -53,6 +53,7 @@ class Player
     float move_x_; 
     bool weapon_switched_ = false;
     GameState &game_state_;
+    OverlayState &overlay_state_;
     WeaponState weapon_;
     ArmorState armor_;
     std::unique_ptr<Weapon> current_weapon_;
@@ -75,7 +76,7 @@ class Player
     int screen_width_;
 
   public:
-    Player(Window &window, GameState &game_state);
+    Player(Window &window, GameState &game_state, OverlayState &overlay_state);
     // Do not make a destructor here switching weapons will not work if you do!
     void update(float delta_time);
     void render();

@@ -5,10 +5,11 @@
 #include "scene.hpp"
 #include "game.hpp"
 #include "window.hpp"
+#include "overlay.hpp"
 #include <iostream>
 #include <vector>
 
-class Console
+class Console : public Overlay
 {
   private:
     SDL_Renderer *renderer_;
@@ -29,17 +30,18 @@ class Console
     SDL_Texture *input_text_texture_;
     TTF_Font *font_;
     GameState &game_state_;
+    OverlayState &overlay_state_;
     int width_;
     int height_;
     std::string input_text_;
 
   public:
-    Console(Window &window, TTF_Font *font, GameState &game_state);
+    Console(Window &window, TTF_Font *font, OverlayState &overlay_state, GameState &game_state);
     ~Console();
     SDL_Texture *createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect &outRect);
-    void handleEvent(const SDL_Event &event);
-    void update(float delta_time);
-    void render();
+    void handleEvent(const SDL_Event &event) override;
+    void update(float delta_time) override;
+    void render() override;
 };
 
 #endif
