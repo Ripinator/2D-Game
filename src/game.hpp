@@ -15,9 +15,7 @@ enum class GameState
   Pause = 3,
   Settings = 4,
   Quit = 5,
-  OverlayActive = 6,
-  OverlayInactive = 7,
-  None = 8
+  None = 6
 };
 
 enum class OverlayState

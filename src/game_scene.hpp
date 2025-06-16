@@ -26,6 +26,7 @@ class GameScene : public Scene
     SDL_Rect background_rect_;
     Player player_;
     LevelData level_data_;
+    bool overlay_present_;
 
     SDL_Texture* background_layer_1_texture_;
     SDL_Texture* background_layer_2_texture_;
@@ -37,6 +38,7 @@ class GameScene : public Scene
     void render() override;
     void update(float delta_time) override;
     void handleEvent(const SDL_Event& event) override;
+    bool OverlayPresent() override { return overlay_present_; }
 };
 
 #endif

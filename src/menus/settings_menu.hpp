@@ -24,6 +24,7 @@ class SettingsMenu : public Scene
     int screen_width_;
     int screen_height_;
     bool dropdown_open_;
+    bool overlay_active_;
     std::string display_name_;
     std::vector<DropDownMenu> display_options_;
     std::vector<DropDownMenu> resolution_options_;
@@ -59,6 +60,7 @@ class SettingsMenu : public Scene
     void drawButton(SDL_Rect &rect, SDL_Texture *texture, SDL_Rect &text_rect, bool hovered, SDL_Event &event);
     SDL_Texture *createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect &outRect);
     void render() override;
+    bool OverlayPresent() override { return overlay_active_; }
 };
 
 #endif

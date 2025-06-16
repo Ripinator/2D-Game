@@ -66,10 +66,6 @@ void Player::handleInput(const SDL_Event &event)
         weapon_switched_ = false;
       }
     }
-    else if (event.key.keysym.sym == SDLK_i)
-    {
-      overlay_state_ = OverlayState::Inventory;
-    }
   }
   else if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
   {

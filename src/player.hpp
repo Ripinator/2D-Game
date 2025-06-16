@@ -86,7 +86,7 @@ class Player
     bool isPlayerAttacking();
     bool isPlayerAttackDone();
     
-    SDL_FPoint getPlayerPosition() const 
+    SDL_FPoint getPlayerPosition() const
     {
       return world_position_;
     }

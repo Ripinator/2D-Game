@@ -120,7 +120,7 @@ void StartMenu::handleEvent(const SDL_Event &event)
   else if (event.key.keysym.sym == SDLK_F2)
   {
     SDL_StartTextInput();
-    setType(GameState::OverlayActive);
+    overlay_active_ = true;
     overlay_state_ = OverlayState::Console;
   }
 }

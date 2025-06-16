@@ -95,6 +95,11 @@ void GameScene::handleEvent(const SDL_Event& event)
     {
       game_state_ = GameState::Menu;
     }
+    else if (event.key.keysym.sym == SDLK_i)
+    {
+      overlay_present_ = true;
+      overlay_state_ = OverlayState::Inventory;  
+    }
   }
 }
 

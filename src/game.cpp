@@ -49,12 +49,7 @@ void gameLoop(Window &window)
         running = false;
       }
 
-      // if (console_overlay && state == GameState::Console)
-      // {
-      //   console_overlay->handleEvent(event);
-      // }
-
-      if (currentOverlay && state == GameState::OverlayActive)
+      if (currentOverlay && currentScene->OverlayPresent())
       {
         currentOverlay->handleEvent(event);
       }
@@ -65,30 +60,23 @@ void gameLoop(Window &window)
     }
 
     currentScene->update(delta_time);
-    if (currentOverlay && state == GameState::OverlayActive)
+    if (currentOverlay && currentScene->OverlayPresent())
     {
       currentOverlay->update(delta_time);
     }
     
-    // if (console_overlay && state == GameState::Console)
-    // {
-    //   console_overlay->update(delta_time);
-    // }
-
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     currentScene->render();
 
-    if (currentOverlay && state == GameState::OverlayActive)
+    // std::cout << "OverlayPresent: " << currentScene->OverlayPresent()
+    //       << ", overlay_state: " << static_cast<int>(overlay_state)
+    //       << ", currentOverlay: " << (currentOverlay ? "yes" : "no") << std::endl;
+
+    if (currentOverlay && currentScene->OverlayPresent())
     {
       currentOverlay->render();
     }
-    
-    // if (console_overlay && state == GameState::Console)
-    // {
-    //   console_overlay->render();
-    // }
-
     SDL_RenderPresent(renderer);
 
     if (state != previousState)
@@ -122,28 +110,12 @@ void gameLoop(Window &window)
         currentScene = start_menu.get();
       }
       state = previousState; 
-      // else if (state == GameState::Console && console_created == false)
-      // {
-      //   console_created = true;
-      //   previousState = previousState != GameState::Console ? previousState : state;
-      //   console_overlay = std::make_unique<Console>(window, bodyFont, state);
-      // }
-      // else if (state == GameState::QuitConsole)
-      // {
-      //   
-      //   console_overlay.reset();
-      //   continue;
-      // }
-
-      // if (state != GameState::QuitConsole && state != GameState::Console)
-      // {
-      //   previousState = state;
-      // }
     }
 
-    if (overlay_state != OverlayState::None && state != GameState::OverlayInactive)
+
+    if (overlay_state != OverlayState::None && currentScene->OverlayPresent())
     {
-      if (state == GameState::Play && overlay_state == OverlayState::Inventory)
+      if (overlay_state == OverlayState::Inventory)
       {
         if (!inventory_menu) 
         {
@@ -158,8 +130,19 @@ void gameLoop(Window &window)
         {
           console_overlay = std::make_unique<Console>(window, bodyFont, overlay_state ,state);
         }
+        currentOverlay = console_overlay.get();
       }
     }
+    else
+    {
+      currentOverlay = nullptr;
+    }
+    // if (state == GameState::Play)
+    //   {
+    //     printf("gge");
+    //   }
+
+    
 
     Uint64 frame_end_time = SDL_GetPerformanceCounter();
     float frame_time = static_cast<float>(frame_end_time - now) / SDL_GetPerformanceFrequency();

@@ -86,7 +86,7 @@ void Console::handleEvent(const SDL_Event &event)
     if (event.key.keysym.sym == SDLK_F3)
     {
       SDL_StopTextInput();
-      game_state_ = GameState::OverlayInactive;
+      overlay_state_ = OverlayState::None;
     }
     else if (event.key.keysym.sym == SDLK_BACKSPACE && !input_text_.empty())
     {

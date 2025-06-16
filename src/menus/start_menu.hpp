@@ -37,6 +37,7 @@ class StartMenu : public Scene
     SDL_Texture *grass_3_texture_; 
     int screen_width_;
     int screen_height_;
+    bool overlay_active_;
 
   public:
     StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state, OverlayState &overlay_state);
@@ -47,6 +48,7 @@ class StartMenu : public Scene
     SDL_Texture *createText(const std::string &text, TTF_Font *font, SDL_Color color, SDL_Rect& outRect);
     void render() override;
     void setType(GameState game_state);
+    bool OverlayPresent() override { return overlay_active_; }
 };
 
 #endif
