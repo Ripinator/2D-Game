@@ -1,20 +1,20 @@
 #include "inventory_menu.hpp"
 
 InventoryMenu::InventoryMenu(Window &window, TTF_Font *font, OverlayState &overlay_state, GameState &game_state)
-: renderer_(window.getRenderer()), font_(font), overlay_state_(overlay_state), game_state_(game_state) 
+: renderer_(window.getRenderer()), font_(font), overlay_state_(overlay_state), game_state_(game_state), inventory_(OccupantType::Player, 32, {})
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();
 
-  inventory_menu_rect_.x = screen_width_ / 2;
-  inventory_menu_rect_.y = screen_height_ / 2;
-  inventory_menu_rect_.w = screen_width_ / 7;
-  inventory_menu_rect_.h = screen_height_ / 7;
+  inventory_menu_rect_.x = screen_width_ / 1.8;
+  inventory_menu_rect_.y = screen_height_ / 1.8;
+  inventory_menu_rect_.w = screen_width_ / 4.5;
+  inventory_menu_rect_.h = screen_height_ / 3.5;
 
-  border_rect_.x = inventory_menu_rect_.x + 8;
-  border_rect_.y = inventory_menu_rect_.y + 8;
-  border_rect_.w = screen_width_ - 8;
-  border_rect_.h = screen_height_ - 8;
+  border_rect_.x = inventory_menu_rect_.x - 4;
+  border_rect_.y = inventory_menu_rect_.y - 4;
+  border_rect_.w = inventory_menu_rect_.w + 8;
+  border_rect_.h = inventory_menu_rect_.h + 8;
 }
 
 SDL_Texture *InventoryMenu::createText(const std::string& text, TTF_Font* font, SDL_Color color, SDL_Rect& outRect)
@@ -51,11 +51,17 @@ void InventoryMenu::update(float delta_time)
 
 void InventoryMenu::render()
 {
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+  SDL_RenderFillRect(renderer_, &border_rect_);
+  SDL_RenderDrawRect(renderer_, &border_rect_);
+
   SDL_SetRenderDrawColor(renderer_, 128, 128, 128, 255);
   SDL_RenderFillRect(renderer_, &inventory_menu_rect_);
   SDL_RenderDrawRect(renderer_, &inventory_menu_rect_);
 
-  SDL_SetRenderDrawColor(renderer_, 128, 128, 128, 255);
-  SDL_RenderFillRect(renderer_, &border_rect_);
-  SDL_RenderDrawRect(renderer_, &border_rect_);
+  //Draw inventory slots
+  // for (int i = 0; i < inventory_.getInventorySize(); i++)
+  // {
+
+  // }
 }

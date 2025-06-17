@@ -34,6 +34,7 @@ class Inventory
     bool addItem(Item &&item_to_add);
     void removeItem(Item &item_to_delete);
     bool getFull() { return is_full_; }
+    int getInventorySize() { return inventory_slots_; }
 };
 
 #endif

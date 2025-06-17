@@ -4,6 +4,8 @@
 #include "overlay.hpp"
 #include "game.hpp"
 #include "window.hpp"
+#include "inventory-system/inventory.hpp"
+#include "inventory-system/item.hpp"
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <vector>
@@ -11,6 +13,8 @@
 class InventoryMenu : public Overlay
 { 
   private:
+    std::vector<Item> items_;
+    Inventory inventory_;
     SDL_Renderer *renderer_;
     SDL_Rect inventory_menu_rect_;
     TTF_Font *font_;

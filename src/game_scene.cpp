@@ -4,10 +4,12 @@
 #include <array>
 
 GameScene::GameScene(Window &window, GameState &game_state, OverlayState &overlay_state)
-: renderer_(window.getRenderer()), game_state_(game_state), player_(window, game_state_, overlay_state_), overlay_state_(overlay_state)
+: renderer_(window.getRenderer()), game_state_(game_state), player_(window, game_state_, overlay_state_, player_inventory_),
+  overlay_state_(overlay_state), player_inventory_(OccupantType::Player, 32, {})
 {
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();
+  player_inventory_ = player_.getInventory();
 
   LevelBuilder builder(window, screen_width_, screen_height_, {});
   level_data_ = builder.loadLevel(1);

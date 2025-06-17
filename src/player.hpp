@@ -5,6 +5,8 @@
 #include "game.hpp"
 #include "window.hpp"
 #include "level_builder.hpp"
+#include "inventory-system/inventory.hpp"
+#include "inventory-system/item.hpp"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <unordered_map>
@@ -57,6 +59,7 @@ class Player
     WeaponState weapon_;
     ArmorState armor_;
     std::unique_ptr<Weapon> current_weapon_;
+    Inventory &player_inventory_;
 
     int attack_collisionbox_offset = 64;
 
@@ -71,12 +74,13 @@ class Player
     const std::vector<Tile> *tiles_;
     PlayerState animation_state_ = PlayerState::Idle;
     std::unordered_map<PlayerState, int> frame_counts_;
+    
 
     int screen_height_;
     int screen_width_;
 
   public:
-    Player(Window &window, GameState &game_state, OverlayState &overlay_state);
+    Player(Window &window, GameState &game_state, OverlayState &overlay_state, Inventory &player_inventory);
     // Do not make a destructor here switching weapons will not work if you do!
     void update(float delta_time);
     void render();
@@ -105,6 +109,7 @@ class Player
 
     int getCameraOffsetX() const { return camera_x_; }
     int getCameraOffsetY() const { return camera_y_; }
+    Inventory getInventory() { return player_inventory_; }
 };
 
 #endif

@@ -26,6 +26,7 @@ class GameScene : public Scene
     SDL_Rect background_rect_;
     Player player_;
     LevelData level_data_;
+    Inventory player_inventory_;
     bool overlay_present_;
 
     SDL_Texture* background_layer_1_texture_;

@@ -4,7 +4,7 @@
 #include "gear/weapons/swords/default_sword.hpp"
 #include "gear/weapons/swords/no_sword.hpp"
 
-Player::Player(Window &window, GameState &game_state, OverlayState &overlay_state) 
+Player::Player(Window &window, GameState &game_state, OverlayState &overlay_state, Inventory &player_inventory) 
   : renderer_(window.getRenderer()),
     velocity_x_(0),
     velocity_y_(0),
@@ -15,7 +15,8 @@ Player::Player(Window &window, GameState &game_state, OverlayState &overlay_stat
     frame_height_(64),
     animation_speed_(100),
     game_state_(game_state),
-    overlay_state_(overlay_state)
+    overlay_state_(overlay_state),
+    player_inventory_(player_inventory)
 {
   screen_height_ = window.getScreenHeight();
   screen_width_ = window.getScreenWidth();

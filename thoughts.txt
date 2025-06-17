@@ -1,6 +1,7 @@
 Idea 1:
 Add secret rooms to every level with a hard boss that will be almost impossible to beat with the current gear.
-The player will have to go back to these rooms at a later point to beat the boss and get some special gear only dropped by this boss.
+The player will have to go back to these rooms at a later point to beat the boss and get some special gear only dropped by this boss probably for achievments
+and cosmetics.
 
 Idea 2:
 The should not take an hp based approach. The player will only be able to take x amount of hits depending on gear and other factors like maybe special skills
@@ -15,3 +16,7 @@ Idea 5:
 Note 1:
 https://youtu.be/M2ZW4uwxU8k?t=1451
 Windows Debugger Recommendation
+
+Note 2:
+Maybe make some helper functions to draw rects with a class?
+So that the code in the menu files is not so redundant
