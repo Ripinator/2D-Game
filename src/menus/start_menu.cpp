@@ -1,8 +1,11 @@
 #include "start_menu.hpp"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include "window.hpp"
 #include "utils/utils.hpp"
+
+Mix_Music* StartMenu::main_theme_music_ = nullptr;
 // iam so sorry this file is filled with horrible code
 
 StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, GameState &game_state, OverlayState &overlay_state) 
@@ -69,6 +72,19 @@ StartMenu::StartMenu(Window &window, TTF_Font *header_font, TTF_Font *font, Game
   text_texture_start_ = createText("Start", font_, black, text_start_rect_);
   text_texture_quit_ = createText("Quit", font_, black, text_quit_rect_);
   text_texture_settings_ = createText("Settings", font_, black, text_settings_rect_);
+
+  Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); // only call once in your app
+
+  if (!main_theme_music_) 
+  {
+    main_theme_music_ = Mix_LoadMUS("assets/sounds/music/the-dragon-and-the-elf-fantasy-ampamp-adventure-background-music-111727.mp3");
+  }
+
+  if (main_theme_music_ && !Mix_PlayingMusic()) 
+  {
+    Mix_PlayMusic(main_theme_music_, -1);
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+  }
 }
 
 StartMenu::~StartMenu()
@@ -85,6 +101,9 @@ StartMenu::~StartMenu()
   SDL_DestroyTexture(text_texture_start_);
   SDL_DestroyTexture(text_texture_quit_);
   SDL_DestroyTexture(text_texture_settings_);
+  // Mix_FreeMusic(StartMenu::main_theme_music_);
+  // StartMenu::main_theme_music_ = nullptr;
+  // Mix_CloseAudio();
 }
 
 void StartMenu::setType(GameState game_state)
@@ -106,6 +125,7 @@ void StartMenu::handleEvent(const SDL_Event &event)
   {
     if (hovered_start)
     {
+      Mix_HaltMusic();
       setType(GameState::Play);
     }
     else if (hovered_quit)
@@ -158,6 +178,10 @@ SDL_Texture *StartMenu::createText(const std::string &text, TTF_Font *font, SDL_
 
 void StartMenu::render() 
 {
+  if (!Mix_PlayingMusic() && main_theme_music_) {
+    Mix_PlayMusic(main_theme_music_, -1);
+  }
+
   SDL_ShowCursor(SDL_ENABLE); 
   int mouse_x, mouse_y;
   SDL_GetMouseState(&mouse_x, &mouse_y);

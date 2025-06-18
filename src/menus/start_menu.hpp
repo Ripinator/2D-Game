@@ -5,6 +5,7 @@
 #include "game.hpp"
 #include "window.hpp"
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 
 class StartMenu : public Scene 
 {
@@ -34,7 +35,8 @@ class StartMenu : public Scene
     SDL_Texture *water_texture_;
     SDL_Texture *grass_1_texture_;
     SDL_Texture *grass_2_texture_;
-    SDL_Texture *grass_3_texture_; 
+    SDL_Texture *grass_3_texture_;
+    static Mix_Music *main_theme_music_;
     int screen_width_;
     int screen_height_;
     bool overlay_active_;

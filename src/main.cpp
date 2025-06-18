@@ -30,7 +30,6 @@ int main(int argc, char *args[])
   SDL_SetWindowFullscreen(window.getWindow(), SDL_WINDOW_FULLSCREEN_DESKTOP);
 
   gameLoop(window);
-
   window.close();
   SDL_Quit();
   return 0;
