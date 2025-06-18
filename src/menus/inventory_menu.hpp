@@ -9,6 +9,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <vector>
+#include <array>
 
 class InventoryMenu : public Overlay
 { 
@@ -22,6 +23,7 @@ class InventoryMenu : public Overlay
     GameState &game_state_;
     SDL_Event event_;
     SDL_Rect border_rect_;
+    std::array<std::array<SDL_Rect, 8>, 4> inventory_slot_rects_;
     int screen_width_;
     int screen_height_;
 

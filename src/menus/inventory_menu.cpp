@@ -15,6 +15,18 @@ InventoryMenu::InventoryMenu(Window &window, TTF_Font *font, OverlayState &overl
   border_rect_.y = inventory_menu_rect_.y - 4;
   border_rect_.w = inventory_menu_rect_.w + 8;
   border_rect_.h = inventory_menu_rect_.h + 8;
+
+  int rows = 4;
+  int columns = 8;
+
+  for (int i = 0; i < rows; i++)
+  {
+    for (int j = 0; j < columns; j++)
+    {
+      inventory_slot_rects_[i][j].h = 40;
+      inventory_slot_rects_[i][j].w = 40;
+    }
+  }
 }
 
 SDL_Texture *InventoryMenu::createText(const std::string& text, TTF_Font* font, SDL_Color color, SDL_Rect& outRect)
