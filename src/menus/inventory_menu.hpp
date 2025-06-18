@@ -27,6 +27,13 @@ class InventoryMenu : public Overlay
     int screen_width_;
     int screen_height_;
 
+    const int INVENTORY_SIZE = 32;
+    const int INVENTORY_ROWS = 4;
+    const int INVENTORY_COLUMNS = 8;
+    const int SLOT_WIDTH = 64;
+    const int SLOT_HEIGHT = 64;
+    const int SLOT_SPACING = 10;
+
   public:
     InventoryMenu(Window &window, TTF_Font *font, OverlayState &overlay_state, GameState &game_state);
     ~InventoryMenu() = default;

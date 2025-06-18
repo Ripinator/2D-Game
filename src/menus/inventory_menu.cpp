@@ -1,4 +1,5 @@
 #include "inventory_menu.hpp"
+#include "utils/utils.hpp"
 
 InventoryMenu::InventoryMenu(Window &window, TTF_Font *font, OverlayState &overlay_state, GameState &game_state)
 : renderer_(window.getRenderer()), font_(font), overlay_state_(overlay_state), game_state_(game_state), inventory_(OccupantType::Player, 32, {})
@@ -6,25 +7,40 @@ InventoryMenu::InventoryMenu(Window &window, TTF_Font *font, OverlayState &overl
   screen_width_ = window.getScreenWidth();
   screen_height_ = window.getScreenHeight();
 
-  inventory_menu_rect_.x = screen_width_ / 1.8;
-  inventory_menu_rect_.y = screen_height_ / 1.8;
-  inventory_menu_rect_.w = screen_width_ / 4.5;
-  inventory_menu_rect_.h = screen_height_ / 3.5;
+  float scale_x = static_cast<float>(screen_width_) / BASE_WIDTH;
+  float scale_y = static_cast<float>(screen_height_) / BASE_HEIGHT;
+  float ui_scale = std::min(scale_x, scale_y); 
+
+  int scaled_slot_width = SLOT_WIDTH * ui_scale;
+  int scaled_slot_height = SLOT_HEIGHT * ui_scale;
+  int scaled_spacing = SLOT_SPACING * ui_scale;
+
+  int rows = 4;
+  int columns = 8;
+  int grid_width = columns * scaled_slot_width + (columns - 1) * scaled_spacing;
+  int grid_height = rows * scaled_slot_height + (rows - 1) * scaled_spacing;
+
+  inventory_menu_rect_.w = grid_width + 40;
+  inventory_menu_rect_.h = grid_height + 40;
+  inventory_menu_rect_.x = (screen_width_ - inventory_menu_rect_.w) / 2;
+  inventory_menu_rect_.y = (screen_height_ - inventory_menu_rect_.h) / 2;
 
   border_rect_.x = inventory_menu_rect_.x - 4;
   border_rect_.y = inventory_menu_rect_.y - 4;
   border_rect_.w = inventory_menu_rect_.w + 8;
   border_rect_.h = inventory_menu_rect_.h + 8;
 
-  int rows = 4;
-  int columns = 8;
+  int start_x = inventory_menu_rect_.x + 20;
+  int start_y = inventory_menu_rect_.y + 20;
 
   for (int i = 0; i < rows; i++)
   {
     for (int j = 0; j < columns; j++)
     {
-      inventory_slot_rects_[i][j].h = 40;
-      inventory_slot_rects_[i][j].w = 40;
+      inventory_slot_rects_[i][j].x = start_x + j * (scaled_slot_width + scaled_spacing);
+      inventory_slot_rects_[i][j].y = start_y + i * (scaled_slot_height + scaled_spacing);
+      inventory_slot_rects_[i][j].w = scaled_slot_width;
+      inventory_slot_rects_[i][j].h = scaled_slot_height;
     }
   }
 }
@@ -58,7 +74,7 @@ void InventoryMenu::handleEvent(const SDL_Event &event)
 
 void InventoryMenu::update(float delta_time) 
 {
-  
+
 }
 
 void InventoryMenu::render()
@@ -71,9 +87,11 @@ void InventoryMenu::render()
   SDL_RenderFillRect(renderer_, &inventory_menu_rect_);
   SDL_RenderDrawRect(renderer_, &inventory_menu_rect_);
 
-  //Draw inventory slots
-  // for (int i = 0; i < inventory_.getInventorySize(); i++)
-  // {
-
-  // }
+  for (int i = 0; i < INVENTORY_ROWS; i++)
+  {
+    for (int j = 0; j < INVENTORY_COLUMNS; j++)
+    {
+      
+    }
+  }
 }
