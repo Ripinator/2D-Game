@@ -7,6 +7,7 @@
 #include "inventory-system/inventory.hpp"
 #include "inventory-system/item.hpp"
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
 #include <array>
@@ -17,12 +18,15 @@ class InventoryMenu : public Overlay
     std::vector<Item> items_;
     Inventory inventory_;
     SDL_Renderer *renderer_;
-    SDL_Rect inventory_menu_rect_;
+    SDL_Rect src_inventory_menu_rect_;
+    SDL_Rect dest_inventory_menu_rect_;
     TTF_Font *font_;
     OverlayState &overlay_state_;
     GameState &game_state_;
     SDL_Event event_;
     SDL_Rect border_rect_;
+    SDL_Surface *player_inventory_surface_;
+    SDL_Texture *player_inventory_texture_;
     std::array<std::array<SDL_Rect, 8>, 4> inventory_slot_rects_;
     int screen_width_;
     int screen_height_;
