@@ -30,6 +30,8 @@ class InventoryMenu : public Overlay
     std::array<std::array<SDL_Rect, 8>, 4> inventory_slot_rects_;
     int screen_width_;
     int screen_height_;
+    int rows_;
+    int columns_;
 
     const int INVENTORY_SIZE = 32;
     const int INVENTORY_ROWS = 4;
