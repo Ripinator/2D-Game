@@ -1,6 +1,8 @@
 #ifndef ITEM_HPP
 #define ITEM_HPP
 #include <stdio.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 enum class ItemType
 {
@@ -19,6 +21,9 @@ class Item
     bool stackable_;
     size_t max_amount_;
     size_t current_amount_;
+    //asset from here: https://xflomasterx.itch.io/coins-free
+    SDL_Texture *item_icon_texture_;
+    SDL_Surface *item_icon_surface_;
 
   public:
     Item(ItemType type, size_t ItemID, bool stackable, size_t max_amount_) : type_(type), ItemID_(ItemID), stackable_(stackable) {}

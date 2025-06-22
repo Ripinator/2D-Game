@@ -274,3 +274,4 @@ void Player::render()
 {
   current_weapon_->render(flip_);
 }
+ 

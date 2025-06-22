@@ -33,10 +33,15 @@ GameScene::GameScene(Window &window, GameState &game_state, OverlayState &overla
 
 void GameScene::render()
 {
-  SDL_ShowCursor(SDL_DISABLE);
-
   SDL_FPoint player_position = player_.getPlayerPosition();
-  
+  if (overlay_state_ == OverlayState::None)
+  {
+    SDL_ShowCursor(SDL_DISABLE);
+  }
+  else
+  {
+    SDL_ShowCursor(SDL_ENABLE);
+  }
   float camera_x = player_position.x - (screen_width_ / 2.0f - 64.0f * 3.0f / 2.0f);
   float camera_y = player_position.y - (screen_height_ * 3.0f / 4.0f - 64.0f * 3.0f / 2.0f);
 
