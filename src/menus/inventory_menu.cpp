@@ -71,6 +71,20 @@ void InventoryMenu::handleEvent(const SDL_Event &event)
       overlay_state_ = OverlayState::None;
     }
   }
+  if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+  {
+    for (int i = 0; i < rows_; i++)
+    {
+      for (int j = 0; j < columns_; j++)
+      {
+        if (hovered_inventory_slot[i][j])
+        {
+
+        }
+      }
+    }
+    
+  }
 }
 
 void InventoryMenu::update(float delta_time) 
@@ -92,12 +106,20 @@ void InventoryMenu::render()
   //   }
   // }
 
+  SDL_GetMouseState(&mouse_x_, &mouse_y_);
+  SDL_Point mouse_point = {mouse_x_, mouse_y_};
+  //int count = 0;
 
   for (int i = 0; i < rows_; i++)
   {
     for (int j = 0; j < columns_; j++)
     {
-      
+      inventory_.getItemTypeOfSlot(3);
+      // if ( != ItemType::None)
+      // {
+        
+      // }
+      hovered_inventory_slot[i][j] = SDL_PointInRect(&mouse_point, &inventory_slot_rects_[i][j]);
     }
   }
 

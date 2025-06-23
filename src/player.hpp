@@ -54,6 +54,7 @@ class Player
     float camera_y_ = 0.0f;
     float move_x_; 
     bool weapon_switched_ = false;
+    size_t inv_size_;
     GameState &game_state_;
     OverlayState &overlay_state_;
     WeaponState weapon_;

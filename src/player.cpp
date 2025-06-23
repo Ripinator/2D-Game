@@ -42,7 +42,11 @@ Player::Player(Window &window, GameState &game_state, OverlayState &overlay_stat
   sprite_sheet_ = SDL_CreateTextureFromSurface(renderer_, surface);
   SDL_FreeSurface(surface);
 
+  player_inventory_.setInventorySize(32);
+  player_inventory_.initializeItems(32);
+
   current_weapon_ = std::make_unique<DefaultSword>(renderer_);
+  player_inventory_.addItem(Item(ItemType::Coin, 1, true, 1000));
 }
 
 void Player::handleInput(const SDL_Event &event)

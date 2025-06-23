@@ -2,6 +2,7 @@
 #define INVENTORY_HPP
 #include <inventory-system/item.hpp>
 #include <vector>
+#include <cassert>
 
 enum class OccupantType
 {
@@ -16,7 +17,7 @@ class Inventory
 {
   private:
     OccupantType type_;
-    int inventory_slots_;
+    size_t inventory_slots_;
     std::vector<Item> inventory_items_;
     bool is_full_;
     static constexpr size_t MAX_INV_SIZE = 40;
@@ -28,13 +29,20 @@ class Inventory
     bool addItemToNewStack(Item &&item_to_add);
 
   public:
-    Inventory(OccupantType type, int inventory_slots, std::vector<Item> inventory_items) : type_(type), inventory_slots_(inventory_slots), inventory_items_(inventory_items) {}
+    Inventory(OccupantType type, int inventory_slots, std::vector<Item> inventory_items);
     ~Inventory() = default;
 
     bool addItem(Item &&item_to_add);
     void removeItem(Item &item_to_delete);
     bool getFull() { return is_full_; }
-    int getInventorySize() { return inventory_slots_; }
+    size_t getInventorySize() { return inventory_slots_; }
+    void setInventorySize(size_t inventory_size) { inventory_slots_ = inventory_size; }
+    void initializeItems(size_t inventory_size);
+    ItemType getItemTypeOfSlot(int vector_idx) 
+    {
+      assert(vector_idx >= 0 && static_cast<size_t>(vector_idx) < inventory_items_.size());
+      return inventory_items_[vector_idx].getType(); 
+    }
 };
 
 #endif

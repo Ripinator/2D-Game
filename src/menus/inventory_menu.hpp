@@ -32,6 +32,10 @@ class InventoryMenu : public Overlay
     int screen_height_;
     int rows_;
     int columns_;
+    // To get the current position of the mouse
+    int mouse_x_;
+    int mouse_y_;
+    bool hovered_inventory_slot[4][8] = { false };
 
     const int INVENTORY_SIZE = 32;
     const int INVENTORY_ROWS = 4;

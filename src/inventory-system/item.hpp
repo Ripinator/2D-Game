@@ -9,7 +9,8 @@ enum class ItemType
   Weapon = 0,
   Armor = 1,
   Potion = 2,
-  Coin = 3
+  Coin = 3,
+  None = 4
 };
 
 
@@ -26,6 +27,7 @@ class Item
     SDL_Surface *item_icon_surface_;
 
   public:
+    Item() : type_(ItemType::None), ItemID_(0), stackable_(false), max_amount_(1) {} 
     Item(ItemType type, size_t ItemID, bool stackable, size_t max_amount_) : type_(type), ItemID_(ItemID), stackable_(stackable) {}
     ~Item() = default;
 
